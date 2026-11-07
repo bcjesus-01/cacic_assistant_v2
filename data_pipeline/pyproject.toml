@@ -1,0 +1,29 @@
+[project]
+name = "data-pipeline"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+authors = [
+    { name = "Bruno", email = "bcjesus.dev@gmail.com" }
+]
+requires-python = ">=3.12"
+dependencies = [
+    "fastembed>=0.9.0",
+    "langchain>=1.4.4",
+    "langchain-core>=1.6.9",
+    "langchain-experimental>=0.4.2",
+    "langchain-huggingface>=1.2.3",
+    "langchain-qdrant>=1.1.0",
+    "llama-parse>=0.6.94",
+    "pydantic-settings>=2.15.0",
+    "python-dotenv>=1.2.4",
+    "qdrant-client>=1.19.1",
+    "sentence-transformers>=6.1.0",
+]
+
+[project.scripts]
+data-pipeline = "data_pipeline:main"
+
+[build-system]
+requires = ["uv_build>=0.13.0,<0.14.0"]
+build-backend = "uv_build"

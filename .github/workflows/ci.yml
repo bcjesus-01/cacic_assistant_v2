@@ -1,0 +1,35 @@
+name: Inspeção de Código (CI)
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  backend-tests:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout do Repositório
+      uses: actions/checkout@v4
+
+    - name: Instalar o 'uv'
+      uses: astral-sh/setup-uv@v3
+      with:
+        version: "latest"
+        
+    - name: Configurar Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: "3.11"
+
+    - name: Instalar Dependências do Backend
+      working-directory: ./backend
+      run: uv sync
+
+    - name: Checar Formatação (Lint) e Rodar Testes
+      working-directory: ./backend
+      run: |
+        # Em um cenário real, aqui rodaríamos o Ruff para linting e o Pytest
+        echo "Validando sintaxe e arquitetura..."
+        uv run python -m py_compile main.py

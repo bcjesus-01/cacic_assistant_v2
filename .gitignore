@@ -1,0 +1,28 @@
+# Segredos
+.env
+.env.*
+!.env.example
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# Node / Next.js
+node_modules/
+.next/
+out/
+
+# Dados locais dos bancos e caches
+pgdata/
+qdrant_data/
+.cache/
+huggingface/
+
+# Sistema / editor
+.DS_Store
+.vscode/
+.idea/
+qdrant_storage/
+/backend/data/
