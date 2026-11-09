@@ -1,8 +1,0 @@
-fastapi
-uvicorn
-qdrant-client
-langchain-qdrant
-langchain-huggingface
-langchain-google-genai
-python-dotenv
-pymupdf4llm

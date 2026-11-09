@@ -1,5 +1,5 @@
+import logging
 import os
-import re
 from typing import Annotated, Literal
 from typing_extensions import TypedDict
 
@@ -12,6 +12,9 @@ from langchain_huggingface import HuggingFaceEmbeddings
 
 from agent.llm import instanciar_gemini
 from agent.prompts import prompt_rag_academico
+from agent.roteamento import escolher_destino
+
+logger = logging.getLogger(__name__)
 
 
 class AgentState(TypedDict):
@@ -39,11 +42,6 @@ token_trimmer = trim_messages(
     include_system=True,
 )
 
-SAUDACOES = {
-    "oi", "olá", "ola", "bom", "boa", "obrigado", "obrigada",
-    "valeu", "tchau", "hey", "hello",
-}
-
 SISTEMA_CONVERSA_GERAL = SystemMessage(
     content=(
         "Você é o Assistente Virtual do CACIC da UESC. Nesta conversa, apenas cumprimente, "
@@ -60,17 +58,10 @@ def decisor(state: AgentState) -> dict:
 
 
 def roteador(state: AgentState) -> Literal["rag_academico", "conversa_geral"]:
-    pergunta = str(state["messages"][-1].content).strip().lower()
-    palavras = re.findall(r"\w+", pergunta)
-
-    # Só saudações/agradecimentos curtos vão para a conversa geral.
-    # Todo o resto passa pelo RAG, que tem a "rota de fuga" no prompt.
-    destino = (
-        "conversa_geral"
-        if palavras and len(palavras) <= 4 and palavras[0] in SAUDACOES
-        else "rag_academico"
-    )
-    print(f"[ROTEADOR] '{pergunta[:60]}' -> {destino}", flush=True)
+    pergunta = str(state["messages"][-1].content).strip()
+    # Regra em agent/roteamento.py (testada de forma isolada)
+    destino = escolher_destino(pergunta)
+    logger.info("[ROTEADOR] '%s' -> %s", pergunta[:60], destino)
     return destino
 
 
@@ -79,9 +70,9 @@ async def rag_academico(state: AgentState, config: RunnableConfig) -> dict:
     pergunta = str(state["messages"][-1].content)
 
     documentos = await retriever.ainvoke(pergunta, config=config)
-    print(f"[RAG] {len(documentos)} documentos recuperados", flush=True)
+    logger.info("[RAG] %d documentos recuperados", len(documentos))
     for d in documentos:
-        print("   >", repr(d.page_content[:120]), flush=True)
+        logger.info("[RAG]   > %r", d.page_content[:120])
 
     contexto = "\n\n".join(d.page_content for d in documentos)
 

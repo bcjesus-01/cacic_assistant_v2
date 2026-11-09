@@ -1,0 +1,9 @@
+# Configuração do Ruff (lint) para o backend.
+target-version = "py312"
+extend-exclude = [".venv"]
+
+[lint]
+# F: pyflakes (imports e variáveis não usados) · E: pycodestyle
+# B: flake8-bugbear (armadilhas comuns) · ASYNC: uso incorreto de código assíncrono
+select = ["F", "E", "B", "ASYNC"]
+ignore = ["E501"]  # comprimento de linha

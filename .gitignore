@@ -25,4 +25,10 @@ huggingface/
 .vscode/
 .idea/
 qdrant_storage/
+
+# Documentos de origem da ingestão (não versionar)
 /backend/data/
+
+# Caches de ferramentas
+.ruff_cache/
+.pytest_cache/

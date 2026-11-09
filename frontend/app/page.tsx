@@ -3,23 +3,64 @@ import { useState, useRef, useEffect, FormEvent } from "react";
 
 type Message = { role: "user" | "assistant"; content: string };
 
-const API_URL = "http://localhost:8000/api/v1/chat/stream";
+const API_URL = `${
+  process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000"
+}/api/v1/chat/stream`;
+const SESSION_KEY = "cacic-session-id";
+
+// crypto.randomUUID só existe em contexto seguro (https ou localhost); há um plano B.
+function novoId(): string {
+  if (typeof crypto !== "undefined" && typeof crypto.randomUUID === "function") {
+    return crypto.randomUUID();
+  }
+  return `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 12)}`;
+}
+
+// Um identificador por navegador: cada aluno tem o próprio histórico de conversa.
+function obterSessionId(): string {
+  try {
+    const salvo = window.localStorage.getItem(SESSION_KEY);
+    if (salvo) return salvo;
+    const novo = novoId();
+    window.localStorage.setItem(SESSION_KEY, novo);
+    return novo;
+  } catch {
+    return novoId(); // localStorage indisponível (modo privado, por exemplo)
+  }
+}
 
 export default function Home() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const sessionIdRef = useRef<string>("");
+
+  useEffect(() => {
+    sessionIdRef.current = obterSessionId();
+  }, []);
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
+  const novaConversa = () => {
+    if (isLoading) return;
+    const novo = novoId();
+    sessionIdRef.current = novo;
+    try {
+      window.localStorage.setItem(SESSION_KEY, novo);
+    } catch {
+      /* sem localStorage: o id vale só até recarregar a página */
+    }
+    setMessages([]);
+  };
+
   const sendMessage = async (e: FormEvent) => {
     e.preventDefault();
     if (!input.trim() || isLoading) return;
 
-    const userMsg: Message = { role: "user", content: input };
+    const userMsg: Message = { role: "user", content: input.trim() };
     setMessages((prev) => [...prev, userMsg, { role: "assistant", content: "" }]);
     setInput("");
     setIsLoading(true);
@@ -36,7 +77,7 @@ export default function Home() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          thread_id: "cacic-sessao-1",
+          thread_id: sessionIdRef.current || obterSessionId(),
           message: userMsg.content,
         }),
       });
@@ -48,33 +89,46 @@ export default function Home() {
       const reader = response.body.getReader();
       const decoder = new TextDecoder("utf-8");
       let buffer = "";
-      let assistantResponse = "";
-      let finished = false;
+      // Estado do stream em um objeto: é alterado dentro de handleEvent e lido no laço.
+      const stream = { texto: "", finished: false, erro: "" };
 
       // Processa um evento SSE completo (bloco entre linhas em branco)
       const handleEvent = (rawEvent: string) => {
+        let nomeEvento = "message";
+        const linhasData: string[] = [];
+
         for (const line of rawEvent.split(/\r?\n/)) {
-          if (!line.startsWith("data:")) continue;
-          let data = line.slice(5);
-          if (data.startsWith(" ")) data = data.slice(1);
-
-          if (data === "[DONE]") {
-            finished = true;
-            return;
+          if (line.startsWith("event:")) {
+            nomeEvento = line.slice(6).trim();
+          } else if (line.startsWith("data:")) {
+            const valor = line.slice(5);
+            linhasData.push(valor.startsWith(" ") ? valor.slice(1) : valor);
           }
+        }
+        if (linhasData.length === 0) return;
 
-          let token = data;
-          try {
-            token = JSON.parse(data); // backend envia cada token como JSON string
-          } catch {
-            /* se não for JSON, usa o texto cru */
-          }
+        const data = linhasData.join("\n");
+        if (data === "[DONE]") {
+          stream.finished = true;
+          return;
+        }
 
-          assistantResponse += token;
+        let conteudo = data;
+        try {
+          const parsed = JSON.parse(data); // o backend envia cada token como string JSON
+          if (typeof parsed === "string") conteudo = parsed;
+        } catch {
+          /* se não for JSON, usa o texto cru */
+        }
+
+        if (nomeEvento === "error") {
+          stream.erro = conteudo;
+        } else {
+          stream.texto += conteudo;
         }
       };
 
-      while (!finished) {
+      while (!stream.finished) {
         const { done, value } = await reader.read();
         if (done) break;
 
@@ -86,16 +140,25 @@ export default function Home() {
 
         for (const ev of events) {
           handleEvent(ev);
-          if (finished) break;
+          if (stream.finished) break;
         }
 
-        updateAssistant(assistantResponse);
+        updateAssistant(stream.texto);
       }
 
       // Descarrega o que sobrou no decoder/buffer
       buffer += decoder.decode();
-      if (!finished && buffer.trim()) handleEvent(buffer);
-      updateAssistant(assistantResponse);
+      if (!stream.finished && buffer.trim()) handleEvent(buffer);
+
+      if (stream.erro) {
+        updateAssistant(
+          stream.texto ? `${stream.texto}\n\n${stream.erro}` : stream.erro
+        );
+      } else if (!stream.texto) {
+        updateAssistant("Não recebi resposta do servidor. Tente novamente.");
+      } else {
+        updateAssistant(stream.texto);
+      }
     } catch (error) {
       console.error("Erro no chat:", error);
       updateAssistant("Erro de conexão com o servidor. Verifique o backend.");
@@ -108,11 +171,21 @@ export default function Home() {
     <main className="flex min-h-screen flex-col items-center bg-gray-50 p-4">
       <div className="w-full max-w-3xl bg-white rounded-xl shadow-lg overflow-hidden flex flex-col h-[90vh]">
         {/* Cabeçalho */}
-        <div className="bg-blue-800 p-4 text-white">
-          <h1 className="text-xl font-bold">Assistente Institucional CACIC</h1>
-          <p className="text-sm text-blue-200">
-            Universidade Estadual de Santa Cruz (UESC)
-          </p>
+        <div className="bg-blue-800 p-4 text-white flex items-start justify-between gap-4">
+          <div>
+            <h1 className="text-xl font-bold">Assistente Institucional CACIC</h1>
+            <p className="text-sm text-blue-200">
+              Universidade Estadual de Santa Cruz (UESC)
+            </p>
+          </div>
+          <button
+            type="button"
+            onClick={novaConversa}
+            disabled={isLoading || messages.length === 0}
+            className="text-sm border border-blue-300 rounded-lg px-3 py-1 hover:bg-blue-700 disabled:opacity-50 transition-colors"
+          >
+            Nova conversa
+          </button>
         </div>
 
         {/* Área de Mensagens */}
@@ -151,6 +224,7 @@ export default function Home() {
             value={input}
             onChange={(e) => setInput(e.target.value)}
             placeholder="Digite sua dúvida acadêmica..."
+            maxLength={2000}
             className="flex-1 border rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 text-black"
             disabled={isLoading}
           />

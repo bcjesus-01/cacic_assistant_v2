@@ -53,7 +53,7 @@ flowchart LR
 | --- | --- |
 | Backend | Python, FastAPI, Uvicorn |
 | Agente | LangGraph, LangChain |
-| LLM | Google Gemini (`gemini-2.5-flash`) via `langchain-google-genai` |
+| LLM | Google Gemini (`gemini-3.5-flash-lite`) via `langchain-google-genai` |
 | Ingestão | `pymupdf4llm`, `langchain-text-splitters` |
 | Busca vetorial | Qdrant, `BAAI/bge-m3` (`langchain-huggingface`) |
 | Memória | PostgreSQL, `AsyncPostgresSaver`, `psycopg_pool` |
@@ -66,18 +66,23 @@ flowchart LR
 cacic_assistant_v2/
 ├── docker-compose.yml
 ├── .env.example
+├── .github/workflows/ci.yml # CI: lint (Ruff), testes (pytest) e checagem de sintaxe
 ├── backend/
 │   ├── Dockerfile
-│   ├── main.py              # FastAPI + CORS
+│   ├── main.py              # FastAPI, CORS e /health
 │   ├── etl_pipeline.py      # ingestão: PDFs -> Markdown -> chunks -> Qdrant
-│   ├── core/
-│   │   └── config.py
+│   ├── pytest.ini
+│   ├── ruff.toml
 │   ├── api/
-│   │   └── routes.py        # POST /chat/stream (gerador SSE)
-│   └── agent/
-│       ├── graph.py         # StateGraph: roteador, RAG, conversa geral
-│       ├── llm.py           # Instância do Gemini
-│       └── prompts.py       # Prompt do RAG
+│   │   ├── routes.py        # POST /chat/stream (gerador SSE)
+│   │   ├── schemas.py       # validação do request (ChatRequest)
+│   │   └── sse.py           # formatação dos eventos SSE
+│   ├── agent/
+│   │   ├── graph.py         # StateGraph: roteador, RAG, conversa geral
+│   │   ├── roteamento.py    # regra de roteamento (pura, testável)
+│   │   ├── llm.py           # Instância do Gemini
+│   │   └── prompts.py       # Prompt do RAG
+│   └── tests/               # testes de roteamento, SSE e validação do request
 ├── data_pipeline/           # módulos em evolução (chunking semântico, reranking)
 │   ├── pyproject.toml
 │   ├── uv.lock
@@ -86,9 +91,11 @@ cacic_assistant_v2/
 │   ├── embedder.py
 │   ├── vector_store.py
 │   └── reranker.py
-├── listar_modelos.py        # utilitário: lista os modelos disponíveis na API do Gemini
+├── scripts/
+│   └── listar_modelos.py    # utilitário: lista os modelos disponíveis na API do Gemini
 └── frontend/
     └── app/
+        ├── layout.tsx
         └── page.tsx         # Interface de chat e parser SSE
 ```
 
@@ -135,12 +142,26 @@ O script usa a variável `QDRANT_URL` (padrão `http://localhost:6333`) e grava 
 - Interface: http://localhost:3000
 - API: http://localhost:8000/docs
 
+## Testes
+
+```bash
+cd backend
+uv run --with pytest pytest -q
+```
+
+Os testes cobrem a regra de roteamento, a formatação dos eventos SSE (incluindo a reconstrução da resposta a partir do fluxo) e a validação do request. Não precisam de chave do Gemini, banco nem modelos. O CI roda o lint (Ruff) e os testes a cada push.
+
 ## Variáveis de ambiente
 
 | Variável | Descrição |
 | --- | --- |
 | `GOOGLE_API_KEY` | Chave da API do Google Gemini |
 | `POSTGRES_PASSWORD` | Senha do PostgreSQL (usada pelo banco e montada na `DATABASE_URL`) |
+| `GEMINI_MODEL` | Opcional. Modelo do Gemini (padrão: `gemini-3.5-flash-lite`) |
+| `GEMINI_MAX_OUTPUT_TOKENS` | Opcional. Limite de tokens da resposta (padrão: `4096`) |
+| `LOG_LEVEL` | Opcional. Nível de log do backend (padrão: `INFO`) |
+| `CORS_ORIGINS` | Opcional. Origens permitidas, separadas por vírgula (padrão: `http://localhost:3000`) |
+| `NEXT_PUBLIC_API_URL` | Opcional, no frontend. URL base da API (padrão: `http://localhost:8000`) |
 
 `DATABASE_URL` e `QDRANT_URL` são definidas pelo `docker-compose.yml` para a rede interna dos contêineres.
 
@@ -149,10 +170,15 @@ O script usa a variável `QDRANT_URL` (padrão `http://localhost:6333`) e grava 
 `POST /api/v1/chat/stream`
 
 ```json
-{ "thread_id": "sessao-123", "message": "Quantas horas de ACC preciso cumprir?" }
+{ "thread_id": "3f2a9c1e-5b7d-4e8a-9c21-7d4e5f6a8b90", "message": "Quantas horas de ACC preciso cumprir?" }
 ```
 
-A resposta é um fluxo `text/event-stream`. Cada evento tem o formato `data: "<token como string JSON>"`, e o fim do fluxo é sinalizado por `data: [DONE]`.
+- `thread_id`: identificador da sessão (de 8 a 64 caracteres: letras, números, `_` e `-`). O frontend gera um UUID por navegador, e cada `thread_id` tem o próprio histórico.
+- `message`: de 1 a 2000 caracteres.
+
+A resposta é um fluxo `text/event-stream`. Cada evento tem o formato `data: "<token como string JSON>"`, e o fim do fluxo é sinalizado por `data: [DONE]`. Se ocorrer uma falha durante a geração, o servidor envia um evento `event: error` com uma mensagem genérica (o detalhe técnico fica só no log) e encerra com `[DONE]`.
+
+Também há `GET /health`, que responde `{"status": "ok"}`.
 
 ## Decisões técnicas
 
@@ -161,7 +187,9 @@ A resposta é um fluxo `text/event-stream`. Cada evento tem o formato `data: "<t
 - **Tokens como JSON no SSE:** serializar cada token com `json.dumps` evita ambiguidade com quebras de linha e caracteres especiais.
 - **Parser SSE com buffer no cliente:** só eventos completos são processados, e o `TextDecoder` roda em modo `stream`, o que evita perda de texto e corrupção de acentos quando um evento chega fragmentado.
 - **Prompt de ancoragem:** o modelo só responde com o contexto recuperado e tem uma resposta padrão de "rota de fuga" quando a informação não existe nos documentos.
-- **Roteamento conservador:** apenas saudações curtas vão para a conversa geral; o resto passa pelo RAG.
+- **Roteamento conservador:** apenas saudações curtas vão para a conversa geral; o resto passa pelo RAG. Cada decisão de roteamento e os trechos recuperados são registrados em log.
+- **Sessão por navegador:** o frontend gera um UUID guardado no `localStorage`; o botão "Nova conversa" cria outro.
+- **Erros sem vazamento:** exceções internas vão para o log; o cliente recebe só uma mensagem genérica.
 
 ## Próximos passos
 

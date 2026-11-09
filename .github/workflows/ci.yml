@@ -2,34 +2,35 @@ name: Inspeção de Código (CI)
 
 on:
   push:
-    branches: [ "main" ]
+    branches: ["main"]
   pull_request:
-    branches: [ "main" ]
+    branches: ["main"]
 
 jobs:
-  backend-tests:
+  backend:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./backend
     steps:
-    - name: Checkout do Repositório
-      uses: actions/checkout@v4
+      - name: Checkout do repositório
+        uses: actions/checkout@v4
 
-    - name: Instalar o 'uv'
-      uses: astral-sh/setup-uv@v3
-      with:
-        version: "latest"
-        
-    - name: Configurar Python
-      uses: actions/setup-python@v5
-      with:
-        python-version: "3.11"
+      - name: Instalar o uv
+        uses: astral-sh/setup-uv@v3
+        with:
+          version: "latest"
 
-    - name: Instalar Dependências do Backend
-      working-directory: ./backend
-      run: uv sync
+      # A versão do Python vem do arquivo backend/.python-version (3.12)
+      - name: Instalar dependências (versões travadas no uv.lock)
+        run: uv sync --frozen
 
-    - name: Checar Formatação (Lint) e Rodar Testes
-      working-directory: ./backend
-      run: |
-        # Em um cenário real, aqui rodaríamos o Ruff para linting e o Pytest
-        echo "Validando sintaxe e arquitetura..."
-        uv run python -m py_compile main.py
+      - name: Lint com Ruff
+        run: uvx ruff@0.16.9 check .
+
+      # pytest é instalado só para esta execução (não altera o uv.lock)
+      - name: Testes (pytest)
+        run: uv run --frozen --with pytest pytest -q
+
+      - name: Verificar sintaxe
+        run: uv run python -m compileall -q main.py agent api etl_pipeline.py

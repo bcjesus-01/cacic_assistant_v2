@@ -8,6 +8,8 @@ services:
     volumes:
       - ./backend:/app
       - /app/.venv
+      # Cache dos modelos do Hugging Face: evita baixar o bge-m3 (~2 GB) a cada recriação do contêiner
+      - hf_cache:/root/.cache/huggingface
     command: uvicorn main:app --host 0.0.0.0 --port 8000
     env_file:
       - ./.env
@@ -30,6 +32,7 @@ services:
     environment:
       HOSTNAME: 0.0.0.0
       PORT: "3000"
+      NEXT_PUBLIC_API_URL: http://localhost:8000
     volumes:
       - ./frontend:/app
       - /app/node_modules
@@ -66,6 +69,9 @@ services:
       - ./qdrant_data:/qdrant/storage
     networks:
       - cacic_network
+
+volumes:
+  hf_cache:
 
 networks:
   cacic_network:
