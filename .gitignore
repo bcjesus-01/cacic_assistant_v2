@@ -35,3 +35,6 @@ qdrant_storage/
 
 # Resultados avulsos da avaliação (os guardados ficam em backend/eval/historico/)
 backend/eval/resultados-*.json
+
+# PDFs institucionais não entram no repositório
+*.pdf
