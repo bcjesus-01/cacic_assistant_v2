@@ -32,3 +32,6 @@ qdrant_storage/
 # Caches de ferramentas
 .ruff_cache/
 .pytest_cache/
+
+# Resultados avulsos da avaliação (os guardados ficam em backend/eval/historico/)
+backend/eval/resultados-*.json

@@ -1,0 +1,369 @@
+[
+  {
+    "id": "mf-quem",
+    "categoria": "Mais Futuro",
+    "tipo": "resposta",
+    "pergunta": "Quem pode receber o Mais Futuro?",
+    "esperado": "Estudantes de baixa renda (questões sociais), como auxílio permanência.",
+    "fatos": [
+      [
+        "baixa renda",
+        "vulnerabilidade",
+        "renda"
+      ]
+    ]
+  },
+  {
+    "id": "mf-inscricao",
+    "categoria": "Mais Futuro",
+    "tipo": "resposta",
+    "pergunta": "Como faço a inscrição no Mais Futuro?",
+    "esperado": "Pelo Sistema Online do Mais Futuro (site), nas datas do edital.",
+    "fatos": [
+      [
+        "sistema online",
+        "maisfuturo2",
+        "site"
+      ]
+    ]
+  },
+  {
+    "id": "mf-desligamento",
+    "categoria": "Mais Futuro",
+    "tipo": "resposta",
+    "pergunta": "Em que casos eu sou desligado do auxílio Mais Futuro?",
+    "esperado": "Ao atingir 66,66% do curso, trancar mais de 4 disciplinas ou reprovar em mais de 4.",
+    "fatos": [
+      [
+        "66,66",
+        "66.66",
+        "66%"
+      ],
+      [
+        "4 disciplinas",
+        "quatro disciplinas"
+      ]
+    ]
+  },
+  {
+    "id": "hc-diferenca",
+    "categoria": "Horas complementares",
+    "tipo": "resposta",
+    "pergunta": "Qual a diferença entre horas complementares e horas de extensão?",
+    "esperado": "Complementares: atividades que complementam a formação (estágios, palestras, IC). Extensão: ações que levam algo acadêmico à comunidade.",
+    "fatos": [
+      [
+        "complementares"
+      ],
+      [
+        "extens"
+      ],
+      [
+        "comunidade"
+      ]
+    ]
+  },
+  {
+    "id": "hc-2023",
+    "categoria": "Horas complementares",
+    "tipo": "resposta",
+    "pergunta": "Estou na matriz 2023. Quantas horas complementares preciso para me formar?",
+    "esperado": "120 horas complementares (mais 80 de extensão).",
+    "fatos": [
+      [
+        "120"
+      ]
+    ]
+  },
+  {
+    "id": "he-2023",
+    "categoria": "Horas complementares",
+    "tipo": "resposta",
+    "pergunta": "Quantas horas de extensão a matriz 2023 exige?",
+    "esperado": "80 horas de extensão.",
+    "fatos": [
+      [
+        "80"
+      ]
+    ]
+  },
+  {
+    "id": "hc-2012",
+    "categoria": "Horas complementares",
+    "tipo": "resposta",
+    "pergunta": "E na matriz 2012, quantas horas complementares são necessárias?",
+    "esperado": "200 horas complementares (o gabarito antigo, 'matriz 2022 = 150', estava errado; o assistente e os documentos dizem matriz 2012 = 200).",
+    "fatos": [
+      [
+        "200"
+      ]
+    ]
+  },
+  {
+    "id": "camisas",
+    "categoria": "Camisas e canecas",
+    "tipo": "resposta",
+    "pergunta": "Como faço para pedir a camisa do CACIC?",
+    "esperado": "Pedido semestral via Google Forms, pagamento por Pix; escolhe-se tecido, cor, modelo, tamanho e estampa.",
+    "fatos": [
+      [
+        "google forms",
+        "formulario"
+      ],
+      [
+        "pix"
+      ]
+    ]
+  },
+  {
+    "id": "canecas",
+    "categoria": "Camisas e canecas",
+    "tipo": "resposta",
+    "pergunta": "Como funciona o pedido de canecas?",
+    "esperado": "Pode-se pedir só a caneca, só o tirante ou o combo; as canecas levam o nome do aluno.",
+    "fatos": [
+      [
+        "caneca"
+      ],
+      [
+        "tirante",
+        "combo"
+      ]
+    ]
+  },
+  {
+    "id": "estagio-vs-tcc",
+    "categoria": "Estágio e TCC",
+    "tipo": "resposta",
+    "pergunta": "O TCC e o estágio são a mesma coisa?",
+    "esperado": "Não. O TCC é obrigatório e não pode ser substituído por estágio; está incluído na disciplina de Estágio Supervisionado.",
+    "fatos": [
+      [
+        "obrigatorio",
+        "obrigatória"
+      ],
+      [
+        "estagio supervisionado",
+        "disciplina de estagio"
+      ]
+    ]
+  },
+  {
+    "id": "estagio-disciplina",
+    "categoria": "Estágio e TCC",
+    "tipo": "resposta",
+    "pergunta": "Como funciona a disciplina de Estágio Supervisionado?",
+    "esperado": "É a disciplina de elaboração e avaliação do TCC.",
+    "fatos": [
+      [
+        "tcc",
+        "trabalho de conclusao"
+      ]
+    ]
+  },
+  {
+    "id": "estagio-regulamentar",
+    "categoria": "Estágio e TCC",
+    "tipo": "resposta",
+    "pergunta": "Como regulamento meu estágio com a UESC?",
+    "esperado": "Escolher a concedente, fazer pré-projeto e plano de atividades, formalizar com o professor da disciplina e o Colegiado (termo de compromisso). O FAQ acrescenta: exige professor orientador.",
+    "fatos": [
+      [
+        "orientador",
+        "termo de compromisso",
+        "pre-projeto"
+      ]
+    ]
+  },
+  {
+    "id": "tcc",
+    "categoria": "Estágio e TCC",
+    "tipo": "resposta",
+    "pergunta": "Como funciona o TCC em Ciência da Computação?",
+    "esperado": "Pode partir de tema proposto por um professor orientador ou pelo aluno, ou do trabalho em IC, estágio ou extensão.",
+    "fatos": [
+      [
+        "orientador"
+      ],
+      [
+        "tema",
+        "proposta"
+      ]
+    ]
+  },
+  {
+    "id": "ajuste",
+    "categoria": "Matrícula",
+    "tipo": "resposta",
+    "pergunta": "O que é o ajuste de matrícula?",
+    "esperado": "Período após a matrícula web para pedir disciplinas que não foram possíveis (pré-requisito) ou que não apareceram na matrícula; cancelamento e inclusão analisados pelo Colegiado (FAQ + regimento).",
+    "fatos": [
+      [
+        "colegiado",
+        "pre-requisito",
+        "matricula web"
+      ]
+    ]
+  },
+  {
+    "id": "proposta",
+    "categoria": "Matrícula",
+    "tipo": "resposta",
+    "pergunta": "Como funciona a proposta de matrícula? Se eu pedir uma disciplina, entro nela?",
+    "esperado": "A solicitação é feita pela web e pedir a disciplina não garante a vaga (depende da ocupação de vagas/ranking).",
+    "fatos": [
+      [
+        "nao garante",
+        "garant"
+      ]
+    ]
+  },
+  {
+    "id": "regularidade",
+    "categoria": "Matrícula",
+    "tipo": "resposta",
+    "pergunta": "O que é ser aluno com matrícula regular?",
+    "esperado": "Semestralização regular: cumprir as disciplinas conforme o fluxograma do curso (FAQ: ser aprovado em todas as do semestre).",
+    "fatos": [
+      [
+        "regular"
+      ],
+      [
+        "fluxograma",
+        "aprovad"
+      ]
+    ]
+  },
+  {
+    "id": "trancamento-disc",
+    "categoria": "Trancamento e abandono",
+    "tipo": "resposta",
+    "pergunta": "Como funciona o trancamento de disciplinas?",
+    "esperado": "Requerimento no prazo do Calendário Acadêmico (Regimento, art. 101).",
+    "fatos": [
+      [
+        "prazo",
+        "calendario"
+      ]
+    ]
+  },
+  {
+    "id": "trancamento-total",
+    "categoria": "Trancamento e abandono",
+    "tipo": "resposta",
+    "pergunta": "O que é o trancamento total de matrícula?",
+    "esperado": "Trancamento total concedido por requerimento, até 3 semestres sucessivos ou não (Regimento, art. 101).",
+    "fatos": [
+      [
+        "tres semestres",
+        "3 semestres"
+      ]
+    ]
+  },
+  {
+    "id": "abandono-disc",
+    "categoria": "Trancamento e abandono",
+    "tipo": "resposta",
+    "pergunta": "Quando uma disciplina é considerada abandonada?",
+    "esperado": "Vale o regimento: abandono = não realizar nenhum dos trabalhos escolares; aprovação exige média 7,0 e 75% de frequência.",
+    "fatos": [
+      [
+        "trabalhos escolares",
+        "75%",
+        "frequencia"
+      ]
+    ]
+  },
+  {
+    "id": "jubilamento",
+    "categoria": "Trancamento e abandono",
+    "tipo": "resposta",
+    "pergunta": "O que acontece se eu ficar três semestres seguidos sem me matricular?",
+    "esperado": "Matrícula cancelada ao interromper o curso por 3 semestres consecutivos ou 4 não consecutivos (Regimento, art. 103, IV); só volta por novo processo seletivo.",
+    "fatos": [
+      [
+        "cancelad",
+        "cancelamento"
+      ]
+    ]
+  },
+  {
+    "id": "cra-craa",
+    "categoria": "Notas",
+    "tipo": "resposta",
+    "pergunta": "Qual a diferença entre CRA e CRAA?",
+    "esperado": "CRA: desempenho em cada período letivo; CRAA: em todos os períodos desde o ingresso.",
+    "fatos": [
+      [
+        "periodo",
+        "semestre"
+      ],
+      [
+        "todos os periodos",
+        "todo o curso",
+        "todas as disciplinas",
+        "desde o ingresso"
+      ]
+    ]
+  },
+  {
+    "id": "segunda-chamada",
+    "categoria": "Notas",
+    "tipo": "resposta",
+    "pergunta": "Como peço segunda chamada de uma prova?",
+    "esperado": "Por meio de processo SEI (vale o FAQ; o regimento antigo fala em requerimento ao Departamento em 3 dias úteis e está desatualizado).",
+    "fatos": [
+      [
+        "processo sei",
+        "sei"
+      ],
+      [
+        "processo"
+      ]
+    ]
+  },
+  {
+    "id": "prova-final",
+    "categoria": "Notas",
+    "tipo": "resposta",
+    "pergunta": "Como é calculada a média final quando faço prova final?",
+    "esperado": "MF = [(MP x 6) + (EF x 4)] / 10.",
+    "fatos": [
+      [
+        "mpx6",
+        "mp x 6",
+        "media parcial x 6",
+        "por seis",
+        "por 6"
+      ],
+      [
+        "efx4",
+        "ef x 4",
+        "prova x 4",
+        "por quatro",
+        "por 4"
+      ]
+    ]
+  },
+  {
+    "id": "fora-reitor",
+    "categoria": "Fora do escopo",
+    "tipo": "recusa",
+    "pergunta": "Qual é o telefone pessoal do reitor da UESC?",
+    "esperado": "Deve recusar (informação inexistente nos documentos)."
+  },
+  {
+    "id": "fora-geral",
+    "categoria": "Fora do escopo",
+    "tipo": "recusa",
+    "pergunta": "Qual é a capital da França?",
+    "esperado": "Deve recusar (fora do escopo acadêmico)."
+  },
+  {
+    "id": "fora-ru",
+    "categoria": "Fora do escopo",
+    "tipo": "recusa",
+    "pergunta": "Qual é o cardápio do restaurante universitário hoje?",
+    "esperado": "Deve recusar (informação inexistente nos documentos)."
+  }
+]

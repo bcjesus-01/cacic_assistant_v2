@@ -1,0 +1,478 @@
+[
+  {
+    "id": "mf-quem",
+    "categoria": "Mais Futuro",
+    "tipo": "resposta",
+    "pergunta": "Quem pode receber o Mais Futuro?",
+    "esperado": "Estudantes de baixa renda (questões sociais), como auxílio permanência.",
+    "fatos": [
+      [
+        "baixa renda",
+        "vulnerabilidade",
+        "renda"
+      ]
+    ],
+    "resposta": "Estudantes em condições de vulnerabilidade socioeconômica, regularmente matriculados nos cursos de graduação presencial das universidades públicas estaduais da Bahia, podem participar do Programa Mais Futuro.",
+    "passou": true,
+    "motivo": "ok",
+    "segundos": 26.9
+  },
+  {
+    "id": "mf-inscricao",
+    "categoria": "Mais Futuro",
+    "tipo": "resposta",
+    "pergunta": "Como faço a inscrição no Mais Futuro?",
+    "esperado": "A inscrição é semestral e feita pelo site do Mais Futuro 2.0.",
+    "fatos": [
+      [
+        "semestral"
+      ],
+      [
+        "mais futuro 2.0",
+        "site"
+      ]
+    ],
+    "resposta": "As inscrições devem ser feitas no Sistema Online do Programa Mais Futuro.\nO endereço eletrônico para acesso é http://maisfuturo2.educacao.ba.gov.br/acessoestudante.\nO período de inscrição ocorre conforme o cronograma oficial.",
+    "passou": false,
+    "motivo": "faltou: semestral, mais futuro 2.0",
+    "segundos": 13.2
+  },
+  {
+    "id": "mf-desligamento",
+    "categoria": "Mais Futuro",
+    "tipo": "resposta",
+    "pergunta": "Em que casos eu sou desligado do auxílio Mais Futuro?",
+    "esperado": "Ao atingir 66,66% do curso, trancar mais de 4 disciplinas ou reprovar em mais de 4.",
+    "fatos": [
+      [
+        "66,66",
+        "66.66",
+        "66%"
+      ],
+      [
+        "4 disciplinas",
+        "quatro disciplinas"
+      ]
+    ],
+    "resposta": "Desculpe, não encontrei essa informação nos documentos oficiais do sistema. Recomendo procurar a diretoria do CACIC.",
+    "passou": false,
+    "motivo": "recusou, mas a informação existe (falha de busca?)",
+    "segundos": 2.1
+  },
+  {
+    "id": "hc-diferenca",
+    "categoria": "Horas complementares",
+    "tipo": "resposta",
+    "pergunta": "Qual a diferença entre horas complementares e horas de extensão?",
+    "esperado": "Complementares: atividades que complementam a formação (estágios, palestras, IC). Extensão: ações que levam algo acadêmico à comunidade.",
+    "fatos": [
+      [
+        "complementares"
+      ],
+      [
+        "extens"
+      ],
+      [
+        "comunidade"
+      ]
+    ],
+    "resposta": "Na Matriz 2012, exige-se o cumprimento de 200 horas de atividades complementares.\nNa Matriz 2023, a exigência passou a ser de 120 horas de atividades complementares e 80 horas de ações de extensão.\nAs ações de extensão totalizam 350 horas no currículo a partir de 2023.1, englobando componentes curriculares específicos e aproveitamento de horas.",
+    "passou": false,
+    "motivo": "faltou: comunidade",
+    "segundos": 1.6
+  },
+  {
+    "id": "hc-2023",
+    "categoria": "Horas complementares",
+    "tipo": "resposta",
+    "pergunta": "Estou na matriz 2023. Quantas horas complementares preciso para me formar?",
+    "esperado": "120 horas complementares (mais 80 de extensão).",
+    "fatos": [
+      [
+        "120"
+      ]
+    ],
+    "resposta": "Na Matriz 2023, é necessário cumprir 120 horas de atividades complementares. Além disso, a matriz exige 80 horas de ações de extensão.",
+    "passou": true,
+    "motivo": "ok",
+    "segundos": 4.0
+  },
+  {
+    "id": "he-2023",
+    "categoria": "Horas complementares",
+    "tipo": "resposta",
+    "pergunta": "Quantas horas de extensão a matriz 2023 exige?",
+    "esperado": "80 horas de extensão.",
+    "fatos": [
+      [
+        "80"
+      ]
+    ],
+    "resposta": "Na Matriz 2023, a exigência é de 80 horas de ações de extensão.",
+    "passou": true,
+    "motivo": "ok",
+    "segundos": 7.0
+  },
+  {
+    "id": "hc-2022",
+    "categoria": "Horas complementares",
+    "tipo": "resposta",
+    "pergunta": "E na matriz 2022, quantas horas complementares são necessárias?",
+    "esperado": "150 horas complementares. (CONFIRMAR no documento: o print do chat citou 'Matriz 2012'.)",
+    "fatos": [
+      [
+        "150"
+      ]
+    ],
+    "resposta": "Desculpe, não encontrei essa informação nos documentos oficiais do sistema. Recomendo procurar a diretoria do CACIC.",
+    "passou": false,
+    "motivo": "recusou, mas a informação existe (falha de busca?)",
+    "segundos": 1.3
+  },
+  {
+    "id": "camisas",
+    "categoria": "Camisas e canecas",
+    "tipo": "resposta",
+    "pergunta": "Como faço para pedir a camisa do CACIC?",
+    "esperado": "Pedido semestral via Google Forms, pagamento por Pix; escolhe-se tecido, cor, modelo, tamanho e estampa.",
+    "fatos": [
+      [
+        "google forms",
+        "formulario"
+      ],
+      [
+        "pix"
+      ]
+    ],
+    "resposta": "Desculpe, não encontrei essa informação nos documentos oficiais do sistema. Recomendo procurar a diretoria do CACIC.",
+    "passou": false,
+    "motivo": "recusou, mas a informação existe (falha de busca?)",
+    "segundos": 1.2
+  },
+  {
+    "id": "canecas",
+    "categoria": "Camisas e canecas",
+    "tipo": "resposta",
+    "pergunta": "Como funciona o pedido de canecas?",
+    "esperado": "Pode-se pedir só a caneca, só o tirante ou o combo; as canecas levam o nome do aluno.",
+    "fatos": [
+      [
+        "caneca"
+      ],
+      [
+        "tirante",
+        "combo"
+      ]
+    ],
+    "resposta": "Desculpe, não encontrei essa informação nos documentos oficiais do sistema. Recomendo procurar a diretoria do CACIC.",
+    "passou": false,
+    "motivo": "recusou, mas a informação existe (falha de busca?)",
+    "segundos": 1.1
+  },
+  {
+    "id": "estagio-vs-tcc",
+    "categoria": "Estágio e TCC",
+    "tipo": "resposta",
+    "pergunta": "O TCC e o estágio são a mesma coisa?",
+    "esperado": "Não. O TCC é obrigatório e não pode ser substituído por estágio; está incluído na disciplina de Estágio Supervisionado.",
+    "fatos": [
+      [
+        "obrigatorio",
+        "obrigatória"
+      ],
+      [
+        "estagio supervisionado",
+        "disciplina de estagio"
+      ]
+    ],
+    "resposta": "Desculpe, não encontrei essa informação nos documentos oficiais do sistema. Recomendo procurar a diretoria do CACIC.",
+    "passou": false,
+    "motivo": "recusou, mas a informação existe (falha de busca?)",
+    "segundos": 12.5
+  },
+  {
+    "id": "estagio-disciplina",
+    "categoria": "Estágio e TCC",
+    "tipo": "resposta",
+    "pergunta": "Como funciona a disciplina de Estágio Supervisionado?",
+    "esperado": "É a disciplina de elaboração e avaliação do TCC.",
+    "fatos": [
+      [
+        "tcc",
+        "trabalho de conclusao"
+      ]
+    ],
+    "resposta": "Desculpe, não encontrei essa informação nos documentos oficiais do sistema. Recomendo procurar a diretoria do CACIC.",
+    "passou": false,
+    "motivo": "recusou, mas a informação existe (falha de busca?)",
+    "segundos": 2.1
+  },
+  {
+    "id": "estagio-regulamentar",
+    "categoria": "Estágio e TCC",
+    "tipo": "resposta",
+    "pergunta": "Como regulamento meu estágio com a UESC?",
+    "esperado": "O estágio pode ser regulamentado pela UESC para contar como horas complementares e exige professor orientador.",
+    "fatos": [
+      [
+        "orientador"
+      ]
+    ],
+    "resposta": "Desculpe, não encontrei essa informação nos documentos oficiais do sistema. Recomendo procurar a diretoria do CACIC.",
+    "passou": false,
+    "motivo": "recusou, mas a informação existe (falha de busca?)",
+    "segundos": 1.9
+  },
+  {
+    "id": "tcc",
+    "categoria": "Estágio e TCC",
+    "tipo": "resposta",
+    "pergunta": "Como funciona o TCC em Ciência da Computação?",
+    "esperado": "Pode partir de tema proposto por um professor orientador ou pelo aluno, ou do trabalho em IC, estágio ou extensão.",
+    "fatos": [
+      [
+        "orientador"
+      ],
+      [
+        "tema",
+        "proposta"
+      ]
+    ],
+    "resposta": "Desculpe, não encontrei essa informação nos documentos oficiais do sistema. Recomendo procurar a diretoria do CACIC.",
+    "passou": false,
+    "motivo": "recusou, mas a informação existe (falha de busca?)",
+    "segundos": 5.1
+  },
+  {
+    "id": "ajuste",
+    "categoria": "Matrícula",
+    "tipo": "resposta",
+    "pergunta": "O que é o ajuste de matrícula?",
+    "esperado": "Período após a matrícula web para pedir disciplinas que não foram possíveis por pré-requisito ou que não apareceram na matrícula.",
+    "fatos": [
+      [
+        "pre-requisito",
+        "prerequisito"
+      ],
+      [
+        "matricula web"
+      ]
+    ],
+    "resposta": "Desculpe, não encontrei essa informação nos documentos oficiais do sistema. Recomendo procurar a diretoria do CACIC.",
+    "passou": false,
+    "motivo": "recusou, mas a informação existe (falha de busca?)",
+    "segundos": 1.2
+  },
+  {
+    "id": "proposta",
+    "categoria": "Matrícula",
+    "tipo": "resposta",
+    "pergunta": "Como funciona a proposta de matrícula? Se eu pedir uma disciplina, entro nela?",
+    "esperado": "Pedido de vaga feito nas férias, a partir do 2º semestre. Não garante a vaga: o ranking é por CRAA.",
+    "fatos": [
+      [
+        "ranking",
+        "craa"
+      ],
+      [
+        "nao garante",
+        "garant"
+      ]
+    ],
+    "resposta": "Desculpe, não encontrei essa informação nos documentos oficiais do sistema. Recomendo procurar a diretoria do CACIC.",
+    "passou": false,
+    "motivo": "recusou, mas a informação existe (falha de busca?)",
+    "segundos": 1.2
+  },
+  {
+    "id": "regularidade",
+    "categoria": "Matrícula",
+    "tipo": "resposta",
+    "pergunta": "O que é ser aluno com matrícula regular?",
+    "esperado": "Ser aprovado em todas as disciplinas do semestre; quem reprova, abandona ou adianta fica irregular e perde prioridade na matrícula web.",
+    "fatos": [
+      [
+        "aprovado"
+      ],
+      [
+        "prioridade"
+      ]
+    ],
+    "resposta": "Desculpe, não encontrei essa informação nos documentos oficiais do sistema. Recomendo procurar a diretoria do CACIC.",
+    "passou": false,
+    "motivo": "recusou, mas a informação existe (falha de busca?)",
+    "segundos": 1.0
+  },
+  {
+    "id": "trancamento-disc",
+    "categoria": "Trancamento e abandono",
+    "tipo": "resposta",
+    "pergunta": "Como funciona o trancamento de disciplinas?",
+    "esperado": "Tem prazo no início do semestre; a disciplina é retirada da matrícula, sem reprovação nem desistência.",
+    "fatos": [
+      [
+        "prazo"
+      ],
+      [
+        "retirad",
+        "nao perde",
+        "nao precisa"
+      ]
+    ],
+    "resposta": "Desculpe, não encontrei essa informação nos documentos oficiais do sistema. Recomendo procurar a diretoria do CACIC.",
+    "passou": false,
+    "motivo": "recusou, mas a informação existe (falha de busca?)",
+    "segundos": 1.3
+  },
+  {
+    "id": "trancamento-total",
+    "categoria": "Trancamento e abandono",
+    "tipo": "resposta",
+    "pergunta": "O que é o trancamento total de matrícula?",
+    "esperado": "Pedir para não cursar por 1 semestre ou mais, sem caracterizar abandono.",
+    "fatos": [
+      [
+        "semestre"
+      ],
+      [
+        "abandono"
+      ]
+    ],
+    "resposta": "Desculpe, não encontrei essa informação nos documentos oficiais do sistema. Recomendo procurar a diretoria do CACIC.",
+    "passou": false,
+    "motivo": "recusou, mas a informação existe (falha de busca?)",
+    "segundos": 11.6
+  },
+  {
+    "id": "abandono-disc",
+    "categoria": "Trancamento e abandono",
+    "tipo": "resposta",
+    "pergunta": "Quando uma disciplina é considerada abandonada?",
+    "esperado": "Com mais de 25% de faltas: o aluno vira desistente e reprova mesmo com média 7.",
+    "fatos": [
+      [
+        "25%"
+      ],
+      [
+        "desistente",
+        "reprova",
+        "perde"
+      ]
+    ],
+    "resposta": "Desculpe, não encontrei essa informação nos documentos oficiais do sistema. Recomendo procurar a diretoria do CACIC.",
+    "passou": false,
+    "motivo": "recusou, mas a informação existe (falha de busca?)",
+    "segundos": 1.2
+  },
+  {
+    "id": "jubilamento",
+    "categoria": "Trancamento e abandono",
+    "tipo": "resposta",
+    "pergunta": "O que acontece se eu ficar três semestres seguidos sem me matricular?",
+    "esperado": "Abandono repetido por 3 semestres seguidos leva ao jubilamento.",
+    "fatos": [
+      [
+        "jubil"
+      ]
+    ],
+    "resposta": "Desculpe, não encontrei essa informação nos documentos oficiais do sistema. Recomendo procurar a diretoria do CACIC.",
+    "passou": false,
+    "motivo": "recusou, mas a informação existe (falha de busca?)",
+    "segundos": 1.5
+  },
+  {
+    "id": "cra-craa",
+    "categoria": "Notas",
+    "tipo": "resposta",
+    "pergunta": "Qual a diferença entre CRA e CRAA?",
+    "esperado": "CRA é o acúmulo das notas do semestre; CRAA, de todas as disciplinas cursadas no curso.",
+    "fatos": [
+      [
+        "semestre"
+      ],
+      [
+        "todo o curso",
+        "todas as disciplinas"
+      ]
+    ],
+    "resposta": "Desculpe, não encontrei essa informação nos documentos oficiais do sistema. Recomendo procurar a diretoria do CACIC.",
+    "passou": false,
+    "motivo": "recusou, mas a informação existe (falha de busca?)",
+    "segundos": 2.1
+  },
+  {
+    "id": "segunda-chamada",
+    "categoria": "Notas",
+    "tipo": "resposta",
+    "pergunta": "Como peço segunda chamada de uma prova?",
+    "esperado": "Por meio de processo SEI.",
+    "fatos": [
+      [
+        "processo sei",
+        "sei"
+      ],
+      [
+        "processo"
+      ]
+    ],
+    "resposta": "Desculpe, não encontrei essa informação nos documentos oficiais do sistema. Recomendo procurar a diretoria do CACIC.",
+    "passou": false,
+    "motivo": "recusou, mas a informação existe (falha de busca?)",
+    "segundos": 1.2
+  },
+  {
+    "id": "prova-final",
+    "categoria": "Notas",
+    "tipo": "resposta",
+    "pergunta": "Como é calculada a média final quando faço prova final?",
+    "esperado": "Média final = ((média parcial x 6) + (nota da prova x 4)) / 10.",
+    "fatos": [
+      [
+        "parcial"
+      ],
+      [
+        "6"
+      ],
+      [
+        "4"
+      ]
+    ],
+    "resposta": "Desculpe, não encontrei essa informação nos documentos oficiais do sistema. Recomendo procurar a diretoria do CACIC.",
+    "passou": false,
+    "motivo": "recusou, mas a informação existe (falha de busca?)",
+    "segundos": 3.6
+  },
+  {
+    "id": "fora-reitor",
+    "categoria": "Fora do escopo",
+    "tipo": "recusa",
+    "pergunta": "Qual é o telefone pessoal do reitor da UESC?",
+    "esperado": "Deve recusar (informação inexistente nos documentos).",
+    "resposta": "Desculpe, não encontrei essa informação nos documentos oficiais do sistema. Recomendo procurar a diretoria do CACIC.",
+    "passou": true,
+    "motivo": "ok",
+    "segundos": 7.9
+  },
+  {
+    "id": "fora-geral",
+    "categoria": "Fora do escopo",
+    "tipo": "recusa",
+    "pergunta": "Qual é a capital da França?",
+    "esperado": "Deve recusar (fora do escopo acadêmico).",
+    "resposta": "Desculpe, não encontrei essa informação nos documentos oficiais do sistema. Recomendo procurar a diretoria do CACIC.",
+    "passou": true,
+    "motivo": "ok",
+    "segundos": 1.0
+  },
+  {
+    "id": "fora-ru",
+    "categoria": "Fora do escopo",
+    "tipo": "recusa",
+    "pergunta": "Qual é o cardápio do restaurante universitário hoje?",
+    "esperado": "Deve recusar (informação inexistente nos documentos).",
+    "resposta": "Desculpe, não encontrei essa informação nos documentos oficiais do sistema. Recomendo procurar a diretoria do CACIC.",
+    "passou": true,
+    "motivo": "ok",
+    "segundos": 1.2
+  }
+]
