@@ -10,6 +10,7 @@ from langchain_core.runnables import RunnableConfig
 from langchain_qdrant import QdrantVectorStore
 from langchain_huggingface import HuggingFaceEmbeddings
 
+from agent.contexto import montar_contexto, nome_fonte, selecionar
 from agent.llm import instanciar_gemini
 from agent.prompts import prompt_rag_academico
 from agent.roteamento import escolher_destino
@@ -30,7 +31,11 @@ qdrant = QdrantVectorStore.from_existing_collection(
     collection_name="cacic_docs",
     url=QDRANT_URL,
 )
-retriever = qdrant.as_retriever(search_kwargs={"k": 3})
+# Busca mais trechos do que o necessário, remove duplicados (o mesmo regulamento pode estar
+# em mais de um PDF) e envia só os melhores ao modelo.
+K_BUSCA = int(os.getenv("RAG_K_BUSCA", 8))
+K_CONTEXTO = int(os.getenv("RAG_K_CONTEXTO", 5))
+retriever = qdrant.as_retriever(search_kwargs={"k": K_BUSCA})
 
 # Mantém só as últimas 10 mensagens, sempre começando por uma do usuário.
 # Aplicado ao montar o prompt (não altera o histórico salvo no checkpointer).
@@ -69,12 +74,13 @@ async def rag_academico(state: AgentState, config: RunnableConfig) -> dict:
     mensagens = token_trimmer.invoke(state["messages"])
     pergunta = str(state["messages"][-1].content)
 
-    documentos = await retriever.ainvoke(pergunta, config=config)
-    logger.info("[RAG] %d documentos recuperados", len(documentos))
+    recuperados = await retriever.ainvoke(pergunta, config=config)
+    documentos = selecionar(recuperados, K_CONTEXTO)
+    logger.info("[RAG] %d recuperados, %d no contexto", len(recuperados), len(documentos))
     for d in documentos:
-        logger.info("[RAG]   > %r", d.page_content[:120])
+        logger.info("[RAG]   > [%s] %r", nome_fonte(d.metadata), d.page_content[:100])
 
-    contexto = "\n\n".join(d.page_content for d in documentos)
+    contexto = montar_contexto(documentos)
 
     cadeia_rag = prompt_rag_academico | llm
     resposta = await cadeia_rag.ainvoke(
