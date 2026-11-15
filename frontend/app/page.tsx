@@ -34,6 +34,7 @@ export default function Home() {
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [falhou, setFalhou] = useState(false);
+  const [limiteAtingido, setLimiteAtingido] = useState(false);
   const ultimaPerguntaRef = useRef<string>("");
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const sessionIdRef = useRef<string>("");
@@ -57,6 +58,7 @@ export default function Home() {
     }
     setMessages([]);
     setFalhou(false);
+    setLimiteAtingido(false);
   };
 
   const enviar = async (texto: string) => {
@@ -65,6 +67,7 @@ export default function Home() {
     setMessages((prev) => [...prev, userMsg, { role: "assistant", content: "" }]);
     setIsLoading(true);
     setFalhou(false);
+    setLimiteAtingido(false);
 
     const updateAssistant = (text: string) =>
       setMessages((prev) => {
@@ -91,7 +94,7 @@ export default function Home() {
       const decoder = new TextDecoder("utf-8");
       let buffer = "";
       // Estado do stream em um objeto: é alterado dentro de handleEvent e lido no laço.
-      const stream = { texto: "", finished: false, erro: "" };
+      const stream = { texto: "", finished: false, erro: "", limite: false };
 
       // Processa um evento SSE completo (bloco entre linhas em branco)
       const handleEvent = (rawEvent: string) => {
@@ -124,6 +127,10 @@ export default function Home() {
 
         if (nomeEvento === "error") {
           stream.erro = conteudo;
+        } else if (nomeEvento === "limite") {
+          // Conversa longa demais: não adianta "tentar novamente", precisa de "nova conversa".
+          stream.erro = conteudo;
+          stream.limite = true;
         } else if (nomeEvento === "reset") {
           // O modelo de reserva assumiu: descarta o texto parcial e recomeça.
           stream.texto = "";
@@ -158,7 +165,11 @@ export default function Home() {
         updateAssistant(
           stream.texto ? `${stream.texto}\n\n${stream.erro}` : stream.erro
         );
-        setFalhou(true);
+        if (stream.limite) {
+          setLimiteAtingido(true);
+        } else {
+          setFalhou(true);
+        }
       } else if (!stream.texto) {
         updateAssistant("Não recebi resposta do servidor. Tente novamente.");
         setFalhou(true);
@@ -248,6 +259,17 @@ export default function Home() {
               </button>
             </div>
           )}
+          {limiteAtingido && !isLoading && (
+            <div className="flex justify-start">
+              <button
+                type="button"
+                onClick={novaConversa}
+                className="text-sm text-blue-800 border border-blue-300 rounded-lg px-3 py-1 hover:bg-blue-50 transition-colors"
+              >
+                Nova conversa
+              </button>
+            </div>
+          )}
           <div ref={messagesEndRef} />
         </div>
 
@@ -260,11 +282,11 @@ export default function Home() {
             placeholder="Digite sua dúvida acadêmica..."
             maxLength={2000}
             className="flex-1 border rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 text-black"
-            disabled={isLoading}
+            disabled={isLoading || limiteAtingido}
           />
           <button
             type="submit"
-            disabled={isLoading || !input.trim()}
+            disabled={isLoading || limiteAtingido || !input.trim()}
             className="bg-blue-800 text-white px-6 py-2 rounded-lg font-medium hover:bg-blue-700 disabled:opacity-50 transition-colors"
           >
             Enviar

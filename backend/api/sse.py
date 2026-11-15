@@ -4,6 +4,7 @@ import json
 
 DONE = "data: [DONE]\n\n"
 MENSAGEM_ERRO = "Não consegui gerar a resposta agora. Tente novamente em instantes."
+MENSAGEM_LIMITE = "Esta conversa ficou longa. Clique em \"Nova conversa\" para continuar."
 # Avisa o cliente de que o texto parcial deve ser descartado (modelo de reserva assumiu).
 RESET = 'event: reset\ndata: ""\n\n'
 

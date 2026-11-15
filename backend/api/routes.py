@@ -1,5 +1,6 @@
 import asyncio
 import logging
+import os
 
 from fastapi import APIRouter
 from fastapi.responses import StreamingResponse
@@ -11,10 +12,13 @@ from agent.graph import DB_URI, workflow
 from agent.reescrita import TAG_CHAMADA_INTERNA
 from api.schemas import ChatRequest
 from api.controle_stream import ControleStream
-from api.sse import DONE, MENSAGEM_ERRO, RESET, extrair_texto, sse
+from api.sse import DONE, MENSAGEM_ERRO, MENSAGEM_LIMITE, RESET, extrair_texto, sse
 
 logger = logging.getLogger(__name__)
 router = APIRouter()
+
+# Orçamento é zero: o limite é sobre não esgotar a cota grátis do Gemini, não sobre dinheiro.
+LIMITE_MENSAGENS_POR_THREAD = int(os.getenv("LIMITE_MENSAGENS_POR_THREAD", 15))
 
 
 @router.post("/chat/stream")
@@ -31,6 +35,12 @@ async def chat_stream(request: ChatRequest):
                 checkpointer = AsyncPostgresSaver(pool)
                 await checkpointer.setup()
                 app_grafo = workflow.compile(checkpointer=checkpointer)
+
+                estado = await app_grafo.aget_state(config)
+                if len(estado.values.get("messages", [])) >= LIMITE_MENSAGENS_POR_THREAD:
+                    yield sse(MENSAGEM_LIMITE, event="limite")
+                    yield DONE
+                    return
 
                 async for event in app_grafo.astream_events(
                     {"messages": [mensagem_humana]}, config, version="v2"
