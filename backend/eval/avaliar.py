@@ -9,6 +9,9 @@ Critério automático (primeira triagem, não substitui a leitura das respostas)
   - tipo "resposta": passa se a resposta contém TODOS os grupos de "fatos"
     (em cada grupo basta uma alternativa; sem diferenciar acentos/maiúsculas);
   - tipo "recusa": passa se o assistente usou a resposta padrão de "não encontrei".
+Item opcional "conversa": lista de mensagens anteriores, enviadas em sequência na mesma
+thread antes da pergunta avaliada (simula uma pergunta de acompanhamento); as respostas
+dessas mensagens não são julgadas.
 Todas as respostas completas são salvas em eval/resultados-<data>.json para revisão.
 """
 
@@ -39,9 +42,9 @@ def contem(texto: str, alternativa: str) -> bool:
     return alt in texto
 
 
-def perguntar(api: str, pergunta: str, timeout: int) -> tuple[str, bool]:
-    """Envia a pergunta (thread nova) e devolve (resposta completa, houve_erro)."""
-    corpo = json.dumps({"thread_id": uuid.uuid4().hex, "message": pergunta}).encode()
+def perguntar(api: str, thread_id: str, pergunta: str, timeout: int) -> tuple[str, bool]:
+    """Envia a pergunta nessa thread e devolve (resposta completa, houve_erro)."""
+    corpo = json.dumps({"thread_id": thread_id, "message": pergunta}).encode()
     req = urllib.request.Request(
         api, data=corpo, headers={"Content-Type": "application/json"}, method="POST"
     )
@@ -87,16 +90,31 @@ def aguardar_backend(api: str, limite: int) -> bool:
     return False
 
 
-def perguntar_com_tentativas(api: str, pergunta: str, timeout: int, tentativas: int):
+def perguntar_com_tentativas(api: str, thread_id: str, pergunta: str, timeout: int, tentativas: int):
     """Repete em falhas transitórias (conexão ou erro do servidor, ex.: 503 do Gemini)."""
     for n in range(1, tentativas + 1):
         try:
-            resposta, erro = perguntar(api, pergunta, timeout)
+            resposta, erro = perguntar(api, thread_id, pergunta, timeout)
         except Exception as e:  # noqa: BLE001
             resposta, erro = f"[falha de conexão: {e}]", True
         if not erro or n == tentativas:
             return resposta, erro, n
         time.sleep(3 * n)
+
+
+def enviar_conversa_anterior(
+    api: str, thread_id: str, conversa: list[str], timeout: int, tentativas: int, pausa: float
+) -> None:
+    """Manda as mensagens anteriores na mesma thread, só para construir o histórico.
+
+    As respostas não são avaliadas; uma falha aqui só vai para o log, porque o que importa é
+    a pergunta final (perguntar_com_tentativas já repete essa em falha transitória).
+    """
+    for msg in conversa:
+        _, erro, _ = perguntar_com_tentativas(api, thread_id, msg, timeout, tentativas)
+        if erro:
+            print(f"      aviso: falha ao enviar mensagem de contexto {msg!r} (thread_id={thread_id})")
+        time.sleep(pausa)
 
 
 def julgar(item: dict, resposta: str, erro: bool) -> tuple[bool, str]:
@@ -141,9 +159,16 @@ def main() -> None:
     por_categoria = defaultdict(lambda: [0, 0])
 
     for i, item in enumerate(itens, 1):
+        thread_id = uuid.uuid4().hex
+        conversa = item.get("conversa") or []
+        if conversa:
+            enviar_conversa_anterior(
+                args.api, thread_id, conversa, args.timeout, args.tentativas, args.pausa
+            )
+
         inicio = time.time()
         resposta, erro, tentativas = perguntar_com_tentativas(
-            args.api, item["pergunta"], args.timeout, args.tentativas
+            args.api, thread_id, item["pergunta"], args.timeout, args.tentativas
         )
         passou, motivo = julgar(item, resposta, erro)
         segundos = time.time() - inicio
@@ -167,6 +192,17 @@ def main() -> None:
     instaveis = sum(r["tentativas"] > 1 for r in resultados)
     if instaveis:
         print(f"Instabilidade: {instaveis} pergunta(s) precisaram de nova tentativa (erro do servidor/Gemini).")
+
+    com_historico = [r["segundos"] for r in resultados if r.get("conversa")]
+    sem_historico = [r["segundos"] for r in resultados if not r.get("conversa")]
+    if com_historico and sem_historico:
+        media_com = sum(com_historico) / len(com_historico)
+        media_sem = sum(sem_historico) / len(sem_historico)
+        print(
+            f"Latência média: {media_sem:.1f}s sem histórico (n={len(sem_historico)}) "
+            f"vs {media_com:.1f}s com histórico (n={len(com_historico)}), "
+            f"+{media_com - media_sem:.1f}s"
+        )
 
     saida = pasta / f"resultados-{time.strftime('%Y%m%d-%H%M%S')}.json"
     saida.write_text(json.dumps(resultados, ensure_ascii=False, indent=2), encoding="utf-8")

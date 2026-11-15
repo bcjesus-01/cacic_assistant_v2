@@ -365,5 +365,130 @@
     "tipo": "recusa",
     "pergunta": "Qual é o cardápio do restaurante universitário hoje?",
     "esperado": "Deve recusar (informação inexistente nos documentos)."
+  },
+  {
+    "id": "fu-hc-2012",
+    "categoria": "Horas complementares",
+    "tipo": "resposta",
+    "conversa": [
+      "Estou na matriz 2023. Quantas horas complementares preciso para me formar?"
+    ],
+    "pergunta": "E para quem está na matriz 2012?",
+    "esperado": "200 horas complementares (matriz 2012).",
+    "fatos": [
+      [
+        "200"
+      ]
+    ]
+  },
+  {
+    "id": "fu-he-2023",
+    "categoria": "Horas complementares",
+    "tipo": "resposta",
+    "conversa": [
+      "Estou na matriz 2023. Quantas horas complementares preciso para me formar?"
+    ],
+    "pergunta": "E quantas horas de extensão eu preciso?",
+    "esperado": "80 horas de extensão (matriz 2023).",
+    "fatos": [
+      [
+        "80"
+      ]
+    ]
+  },
+  {
+    "id": "fu-trancamento-limite",
+    "categoria": "Trancamento e abandono",
+    "tipo": "resposta",
+    "conversa": [
+      "O que é o trancamento total de matrícula?"
+    ],
+    "pergunta": "Quantos semestres eu posso trancar, no total?",
+    "esperado": "Até 3 semestres, sucessivos ou não (Regimento, art. 101).",
+    "fatos": [
+      [
+        "tres semestres",
+        "3 semestres"
+      ]
+    ]
+  },
+  {
+    "id": "fu-abandono-frequencia",
+    "categoria": "Trancamento e abandono",
+    "tipo": "resposta",
+    "conversa": [
+      "Quando uma disciplina é considerada abandonada?"
+    ],
+    "pergunta": "E qual é a frequência mínima pra não reprovar?",
+    "esperado": "75% de frequência (Regimento).",
+    "fatos": [
+      [
+        "75%",
+        "75"
+      ]
+    ]
+  },
+  {
+    "id": "fu-estagio-disciplina",
+    "categoria": "Estágio e TCC",
+    "tipo": "resposta",
+    "conversa": [
+      "O TCC e o estágio são a mesma coisa?"
+    ],
+    "pergunta": "Então em qual disciplina isso está incluído?",
+    "esperado": "Disciplina de Estágio Supervisionado.",
+    "fatos": [
+      [
+        "estagio supervisionado",
+        "disciplina de estagio"
+      ]
+    ]
+  },
+  {
+    "id": "fu-segunda-chamada-sistema",
+    "categoria": "Notas",
+    "tipo": "resposta",
+    "conversa": [
+      "Como peço segunda chamada de uma prova?"
+    ],
+    "pergunta": "E isso é feito por qual sistema?",
+    "esperado": "Processo SEI (FAQ).",
+    "fatos": [
+      [
+        "processo sei",
+        "sei"
+      ]
+    ]
+  },
+  {
+    "id": "fu-mf-desligamento",
+    "categoria": "Mais Futuro",
+    "tipo": "resposta",
+    "conversa": [
+      "Quem pode receber o Mais Futuro?"
+    ],
+    "pergunta": "E em que situação eu perderia esse auxílio?",
+    "esperado": "Ao atingir 66,66% do curso, trancar mais de 4 disciplinas ou reprovar em mais de 4.",
+    "fatos": [
+      [
+        "66,66",
+        "66.66",
+        "66%"
+      ],
+      [
+        "4 disciplinas",
+        "quatro disciplinas"
+      ]
+    ]
+  },
+  {
+    "id": "fu-fora-escopo-ru",
+    "categoria": "Fora do escopo",
+    "tipo": "recusa",
+    "conversa": [
+      "Quem pode receber o Mais Futuro?"
+    ],
+    "pergunta": "E qual é o cardápio do restaurante universitário hoje?",
+    "esperado": "Deve recusar (informação inexistente nos documentos; não tem relação com o Mais Futuro)."
   }
 ]
