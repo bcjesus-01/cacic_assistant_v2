@@ -7,7 +7,9 @@ services:
       - "8000:8000"
     volumes:
       - ./backend:/app
-      - /app/.venv
+      # Nomeado (não anônimo): recriar o contêiner reusa o mesmo volume em vez de criar um novo
+      # órfão de ~6,5 GB cada vez (já aconteceu — ver "Armadilhas conhecidas" no CLAUDE.md).
+      - backend_venv:/app/.venv
       # Cache dos modelos do Hugging Face: evita baixar o bge-m3 (~2 GB) a cada recriação do contêiner
       - hf_cache:/root/.cache/huggingface
     command: uvicorn main:app --host 0.0.0.0 --port 8000
@@ -35,8 +37,8 @@ services:
       NEXT_PUBLIC_API_URL: http://localhost:8000
     volumes:
       - ./frontend:/app
-      - /app/node_modules
-      - /app/.next
+      - frontend_node_modules:/app/node_modules
+      - frontend_next:/app/.next
     command: sh -c "npm install && npm run dev"
     depends_on:
       - backend
@@ -72,6 +74,9 @@ services:
 
 volumes:
   hf_cache:
+  backend_venv:
+  frontend_node_modules:
+  frontend_next:
 
 networks:
   cacic_network:
