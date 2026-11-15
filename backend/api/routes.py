@@ -8,6 +8,7 @@ from langgraph.checkpoint.postgres.aio import AsyncPostgresSaver
 from psycopg_pool import AsyncConnectionPool
 
 from agent.graph import DB_URI, workflow
+from agent.reescrita import TAG_CHAMADA_INTERNA
 from api.schemas import ChatRequest
 from api.controle_stream import ControleStream
 from api.sse import DONE, MENSAGEM_ERRO, RESET, extrair_texto, sse
@@ -34,6 +35,11 @@ async def chat_stream(request: ChatRequest):
                 async for event in app_grafo.astream_events(
                     {"messages": [mensagem_humana]}, config, version="v2"
                 ):
+                    if TAG_CHAMADA_INTERNA in (event.get("tags") or []):
+                        # Chamada interna (ex.: reescrita da pergunta para a busca); não é a
+                        # resposta ao aluno, e não conta como troca para o modelo de reserva.
+                        continue
+
                     if event["event"] == "on_chat_model_start":
                         if controle.iniciar_modelo():
                             # O modelo de reserva assumiu depois de tokens já enviados.

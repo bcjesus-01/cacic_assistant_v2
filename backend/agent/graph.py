@@ -5,7 +5,7 @@ from typing_extensions import TypedDict
 
 from langgraph.graph import StateGraph, START, END
 from langgraph.graph.message import add_messages
-from langchain_core.messages import BaseMessage, SystemMessage, trim_messages
+from langchain_core.messages import BaseMessage, HumanMessage, SystemMessage, trim_messages
 from langchain_core.runnables import RunnableConfig
 from langchain_qdrant import QdrantVectorStore
 from langchain_huggingface import HuggingFaceEmbeddings
@@ -13,6 +13,13 @@ from langchain_huggingface import HuggingFaceEmbeddings
 from agent.contexto import montar_contexto, nome_fonte, selecionar
 from agent.llm import instanciar_gemini
 from agent.prompts import prompt_rag_academico
+from agent.reescrita import (
+    INSTRUCAO_REESCRITA,
+    TAG_CHAMADA_INTERNA,
+    deve_reescrever,
+    limpar_reescrita,
+    montar_historico_textual,
+)
 from agent.roteamento import escolher_destino
 
 logger = logging.getLogger(__name__)
@@ -23,6 +30,9 @@ class AgentState(TypedDict):
 
 
 llm = instanciar_gemini()
+# Cliente dedicado para a reescrita (mesmos modelos principal/reserva, saída bem menor):
+# evita compartilhar o cliente usado na resposta ao aluno.
+llm_reescrita = instanciar_gemini(max_output_tokens=60)
 embeddings = HuggingFaceEmbeddings(model_name="BAAI/bge-m3")
 QDRANT_URL = os.getenv("QDRANT_URL", "http://qdrant:6333")
 
@@ -70,11 +80,38 @@ def roteador(state: AgentState) -> Literal["rag_academico", "conversa_geral"]:
     return destino
 
 
+async def reescrever_para_busca(mensagens: list, pergunta: str, config: RunnableConfig) -> str:
+    """Pergunta de acompanhamento (ex.: "e para a matriz 2012?") sozinha não diz muita coisa
+    para a busca; reescreve numa pergunta independente usando o histórico. Qualquer falha ou
+    saída vazia cai para a pergunta original, sem quebrar o stream."""
+    if not deve_reescrever(mensagens):
+        return pergunta
+    try:
+        historico = montar_historico_textual(mensagens)
+        # A tag deixa api/routes.py ignorar esses tokens: não são a resposta ao aluno, e um
+        # "on_chat_model_start" aqui não pode ser lido como troca para o modelo de reserva.
+        config_interno = {**config, "tags": [*(config.get("tags") or []), TAG_CHAMADA_INTERNA]}
+        resposta = await llm_reescrita.ainvoke(
+            [
+                SystemMessage(content=INSTRUCAO_REESCRITA),
+                HumanMessage(content=f"Histórico:\n{historico}\n\nÚltima pergunta: {pergunta}"),
+            ],
+            config=config_interno,
+        )
+        pergunta_busca = limpar_reescrita(resposta.content, pergunta)
+    except Exception:
+        logger.exception("Falha ao reescrever a pergunta de busca; usando a original")
+        pergunta_busca = pergunta
+    logger.info("[REESCRITA] %r -> %r", pergunta[:60], pergunta_busca[:60])
+    return pergunta_busca
+
+
 async def rag_academico(state: AgentState, config: RunnableConfig) -> dict:
     mensagens = token_trimmer.invoke(state["messages"])
     pergunta = str(state["messages"][-1].content)
+    pergunta_busca = await reescrever_para_busca(mensagens, pergunta, config)
 
-    recuperados = await retriever.ainvoke(pergunta, config=config)
+    recuperados = await retriever.ainvoke(pergunta_busca, config=config)
     documentos = selecionar(recuperados, K_CONTEXTO)
     logger.info("[RAG] %d recuperados, %d no contexto", len(recuperados), len(documentos))
     for d in documentos:
