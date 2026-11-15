@@ -182,7 +182,7 @@ Os testes cobrem a regra de roteamento, a formatação dos eventos SSE (incluind
 
 ## Avaliação
 
-O assistente é avaliado com um conjunto de perguntas reais dos estudantes (`backend/eval/perguntas.json`). Cada pergunta tem a resposta esperada e os fatos que a resposta precisa conter; há também perguntas fora do escopo, em que o correto é recusar.
+O assistente é avaliado com um conjunto de perguntas reais dos estudantes (`backend/eval/perguntas.json`). Cada pergunta tem a resposta esperada e os fatos que a resposta precisa conter; há também perguntas fora do escopo, em que o correto é recusar. Um item pode ter um campo opcional `conversa`, com mensagens anteriores enviadas na mesma conversa antes da pergunta avaliada — simula uma pergunta de acompanhamento (ex.: "e para a matriz 2012?").
 
 ```bash
 # com o backend no ar
@@ -204,6 +204,8 @@ O script espera o backend ficar saudável (`/health`), faz cada pergunta em uma 
 As perguntas fora do escopo foram recusadas em todas as rodadas, e nenhuma resposta inventada foi identificada. Cada etapa corrigiu uma causa diferente: critério de avaliação, documentos que faltavam na base, busca e formato do conteúdo curado.
 
 **Limite desta medição:** o conjunto de 26 perguntas foi escrito a partir do FAQ, que agora faz parte da base. Ele mede bem se a busca encontra o que está indexado, mas **não** estima o desempenho com perguntas novas dos alunos. O critério de avaliação também foi ajustado entre algumas etapas, conforme os documentos oficiais e o FAQ foram sendo reconciliados. O próximo passo é um segundo conjunto, com perguntas que não saíram do FAQ.
+
+**Perguntas de acompanhamento:** a busca usava só a última mensagem da conversa, então uma pergunta como "e para a matriz 2012?" perdia o assunto. Oito casos de acompanhamento (campo `conversa`) foram adicionados ao conjunto para medir isso: sem reescrever a pergunta antes da busca, 5/8 passavam; com a reescrita (histórico da conversa vira uma pergunta independente, só para a busca — ver "Decisões técnicas"), 7/8 passam, sem regressão nos 26 originais. O custo é uma chamada extra ao Gemini por pergunta de acompanhamento (~1,5-2s).
 
 ## Variáveis de ambiente
 
@@ -252,6 +254,7 @@ Também há `GET /health`, que responde `{"status": "ok"}`.
 - **Avaliação guiada por dados:** mudanças na busca e nos documentos são medidas com o conjunto de perguntas antes de serem mantidas.
 - **Sessão por navegador:** o frontend gera um UUID guardado no `localStorage`; o botão "Nova conversa" cria outro.
 - **Erros sem vazamento:** exceções internas vão para o log; o cliente recebe só uma mensagem genérica.
+- **Reescrita da pergunta de busca:** antes de buscar no Qdrant, uma pergunta de acompanhamento ("e para a matriz 2012?") é reescrita numa versão independente usando o histórico da conversa — só para a busca; o prompt de resposta continua vendo as mensagens originais. Usa um cliente Gemini dedicado (mesmos modelos principal/reserva, saída bem menor), com uma tag própria nos eventos do LangGraph para a rota de SSE não repassar esses tokens ao cliente nem confundir essa chamada interna com uma troca para o modelo de reserva. Qualquer falha ou saída vazia cai para a pergunta original.
 
 ## Limitações conhecidas
 
@@ -259,6 +262,7 @@ Também há `GET /health`, que responde `{"status": "ok"}`.
 - Documentos oficiais mais antigos podem contradizer práticas atuais; a base só reflete o que está indexado, e o FAQ é a referência para procedimentos recentes.
 - A busca é apenas semântica (densa), e a pontuação de similaridade entre trechos relevantes e irrelevantes é próxima, o que pede um reranker em perguntas mais difíceis.
 - O conjunto de avaliação é pequeno e foi derivado do FAQ (ver a seção de Avaliação).
+- Em pelo menos um caso de acompanhamento (`fu-estagio-disciplina`), a busca encontrou o trecho certo em 1º lugar e ainda assim o modelo recusou: um problema de prompt/geração de resposta, não de recuperação.
 
 ## Próximos passos
 
@@ -266,7 +270,6 @@ Também há `GET /health`, que responde `{"status": "ok"}`.
 - Pool de conexões e grafo compilados uma única vez no `lifespan` do FastAPI.
 - Reranker e busca híbrida (semântica + palavras-chave), medidos pela avaliação.
 - Divisão dos trechos respeitando artigos e listas, e metadados de página dos PDFs.
-- Reescrever a pergunta com o histórico da conversa antes da busca.
 - Exibir as fontes (documento e página) nas respostas.
 - Integrar ou consolidar os módulos de `data_pipeline/` (chunking semântico, reranker).
 
