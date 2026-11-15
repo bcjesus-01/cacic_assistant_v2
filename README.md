@@ -209,13 +209,13 @@ As perguntas fora do escopo foram recusadas em todas as rodadas, e nenhuma respo
 
 ### Conjunto de avaliação separado (held-out)
 
-Os 26 (+ 8 de acompanhamento) itens acima são um **conjunto de desenvolvimento**: foram escritos a partir do FAQ e já guiaram ajustes de prompt, busca e conteúdo, então uma boa nota ali não garante o mesmo desempenho com perguntas novas. `backend/eval/perguntas_heldout.json` é um segundo conjunto — de 15 a 20 perguntas que o sistema nunca viu, escritas pelo Bruno ou por alunos reais (sem dados pessoais) — que **nunca** deve ser usado para ajustar prompt, FAQ, busca ou `K_BUSCA`/`K_CONTEXTO`. Qualquer item que motive uma correção é marcado como `"queimado": true` (continua no arquivo, como histórico, mas deixa de contar como resultado limpo na próxima rodada oficial).
+Os 26 (+ 8 de acompanhamento) itens acima são um **conjunto de desenvolvimento**: foram escritos a partir do FAQ e já guiaram ajustes de prompt, busca e conteúdo, então uma boa nota ali não garante o mesmo desempenho com perguntas novas. `backend/eval/perguntas_heldout.json` é um segundo conjunto — perguntas que o sistema nunca viu, escritas pelo Bruno ou por alunos reais (sem dados pessoais) — que **nunca** deve ser usado para ajustar prompt, FAQ, busca ou `K_BUSCA`/`K_CONTEXTO`. Qualquer item que motive uma correção é marcado como `"queimado": true` (continua no arquivo, como histórico, mas deixa de contar como resultado limpo na próxima rodada oficial).
 
 Schema igual ao de `perguntas.json`, mais:
 
 | Campo | Descrição |
 | --- | --- |
-| `fonte_gabarito` | De onde vem a resposta certa; começa pelo nome do arquivo tal como aparece em `metadata.fonte` no Qdrant (ex.: `"data/regimento.pdf, art. 101"`), para o classificador de erros cruzar automaticamente. |
+| `fonte_gabarito` | De onde vem a resposta certa, em texto legível (ex.: `"Regimento Geral da UESC (2006), Art. 101"`), não o caminho do arquivo. `classificar_erros.py` cruza automaticamente usando o mesmo nome "legível" dos rótulos `[Fonte: X]` do prompt (`agent.contexto.nome_fonte`). |
 | `origem` | `"aluno"` ou `"bruno"`. |
 | `queimado` | Booleano; `false` até o item motivar uma correção. |
 
@@ -225,11 +225,13 @@ Schema igual ao de `perguntas.json`, mais:
 uv run python eval/validar_heldout.py
 ```
 
-Para rodar (o arquivo começa vazio; veja o exemplo para preencher):
+Para rodar:
 
 ```bash
 uv run python eval/avaliar.py --arquivo eval/perguntas_heldout.json --rodadas 3
 ```
+
+**Primeira rodada oficial (2026-11-15, sem nenhum ajuste de prompt/busca/FAQ/K antes dela): 13/20 (65%, IC 95% Wilson [43%, 82%])** — bem abaixo dos 96% do conjunto de desenvolvimento, confirmando que esse número era otimista. Das 7 falhas, `eval/classificar_erros.py` e a revisão manual encontraram 3 de busca/seleção (tipo a), 3 de prompt/resposta mesmo com o contexto certo (tipo b) e 1 de documento desatualizado/ausente na base (tipo c) — sem maioria clara, então o próximo passo não é só busca híbrida/reranker nem só ajuste de prompt (ver `docs/ROADMAP.md`, Etapa 3, para o detalhe de cada falha).
 
 `--rodadas N` repete a mesma lista de perguntas N vezes e relata a variação (média e desvio padrão dos acertos) entre rodadas. O relatório mostra o **intervalo de confiança de Wilson** ao lado da taxa simples — com 15 a 20 itens esse intervalo é largo (ex.: 7/8 acertos dá algo como 53%-98%), e é por isso: uma taxa pontual sozinha, com tão poucos itens, não diz muito sobre o desempenho real. Para entender cada erro, `eval/classificar_erros.py <resultado.json>` separa, para cada falha, se (a) a busca não achou o trecho certo, (b) o trecho estava no contexto e o modelo respondeu errado, ou (c) o documento nem está indexado — (d) gabarito errado nunca é automático, o script só reúne os dados para você decidir.
 
