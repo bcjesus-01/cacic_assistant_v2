@@ -38,3 +38,8 @@ backend/eval/resultados-*.json
 
 # PDFs institucionais não entram no repositório
 *.pdf
+
+# Notas internas de desenvolvimento com IA (não expor o uso de IA no projeto)
+/CLAUDE.md
+/docs/DECISOES.md
+/docs/ROADMAP.md
