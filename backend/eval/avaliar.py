@@ -12,11 +12,17 @@ Critério automático (primeira triagem, não substitui a leitura das respostas)
 Item opcional "conversa": lista de mensagens anteriores, enviadas em sequência na mesma
 thread antes da pergunta avaliada (simula uma pergunta de acompanhamento); as respostas
 dessas mensagens não são julgadas.
+Item opcional "queimado": true marca um item do conjunto held-out que já motivou uma
+correção (não é mais um resultado "limpo"); a rodada avisa, mas não impede a execução.
+--rodadas N repete a mesma lista de perguntas N vezes e relata a variação entre rodadas.
+O relatório final inclui o intervalo de confiança de Wilson (eval/estatistica.py), porque
+com poucos itens (ex.: o conjunto held-out) a taxa simples sozinha é pouco informativa.
 Todas as respostas completas são salvas em eval/resultados-<data>.json para revisão.
 """
 
 import argparse
 import json
+import statistics
 import sys
 import re
 import time
@@ -25,6 +31,8 @@ import urllib.request
 import uuid
 from collections import defaultdict
 from pathlib import Path
+
+from estatistica import intervalo_wilson
 
 API_PADRAO = "http://localhost:8000/api/v1/chat/stream"
 MARCA_RECUSA = "nao encontrei essa informacao"
@@ -136,28 +144,9 @@ def julgar(item: dict, resposta: str, erro: bool) -> tuple[bool, str]:
     return (True, "ok") if not faltando else (False, "faltou: " + ", ".join(faltando))
 
 
-def main() -> None:
-    pasta = Path(__file__).parent
-    ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawTextHelpFormatter)
-    ap.add_argument("--api", default=API_PADRAO)
-    ap.add_argument("--arquivo", default=str(pasta / "perguntas.json"))
-    ap.add_argument("--pausa", type=float, default=1.0, help="segundos entre perguntas")
-    ap.add_argument("--timeout", type=int, default=120)
-    ap.add_argument("--espera", type=int, default=180, help="segundos esperando o /health do backend")
-    ap.add_argument("--tentativas", type=int, default=3, help="tentativas por pergunta em falha transitória")
-    args = ap.parse_args()
-
-    print(f"Aguardando o backend em {url_saude(args.api)} ...")
-    if not aguardar_backend(args.api, args.espera):
-        sys.exit(
-            "O backend não respondeu em /health. Suba com 'docker-compose up -d backend' e "
-            "espere 'Application startup complete' nos logs antes de avaliar."
-        )
-
-    itens = json.loads(Path(args.arquivo).read_text(encoding="utf-8"))
+def rodar_rodada(itens: list[dict], args) -> list[dict]:
+    """Faz uma pergunta (ou conversa) por item e devolve os resultados julgados."""
     resultados = []
-    por_categoria = defaultdict(lambda: [0, 0])
-
     for i, item in enumerate(itens, 1):
         thread_id = uuid.uuid4().hex
         conversa = item.get("conversa") or []
@@ -173,8 +162,6 @@ def main() -> None:
         passou, motivo = julgar(item, resposta, erro)
         segundos = time.time() - inicio
 
-        por_categoria[item["categoria"]][1] += 1
-        por_categoria[item["categoria"]][0] += int(passou)
         print(f"[{i:02d}/{len(itens)}] {'OK ' if passou else 'FALHA'} {item['id']:<22} "
               f"{segundos:4.1f}s  {'' if passou else motivo}"
               f"{'  (precisou de ' + str(tentativas) + ' tentativas)' if tentativas > 1 else ''}")
@@ -182,13 +169,32 @@ def main() -> None:
                            "motivo": motivo, "segundos": round(segundos, 1),
                            "tentativas": tentativas})
         time.sleep(args.pausa)
+    return resultados
 
+
+def relatorio(resultados: list[dict]) -> tuple[int, int]:
+    """Imprime o relatório de uma rodada; devolve (acertos, total) para agregação entre rodadas."""
     total = len(resultados)
     acertos = sum(r["passou"] for r in resultados)
+
+    por_categoria = defaultdict(lambda: [0, 0])
+    for r in resultados:
+        por_categoria[r["categoria"]][1] += 1
+        por_categoria[r["categoria"]][0] += int(r["passou"])
+
     print("\nPor categoria:")
     for cat, (ok, n) in por_categoria.items():
         print(f"  {cat:<24} {ok}/{n}")
-    print(f"\nTOTAL: {acertos}/{total} ({100 * acertos / total:.0f}%)")
+
+    if total == 0:
+        print("\nTOTAL: nenhum item no arquivo.")
+        return 0, 0
+
+    inferior, superior = intervalo_wilson(acertos, total)
+    aviso_largo = "  (poucos itens: intervalo largo)" if total < 30 else ""
+    print(f"\nTOTAL: {acertos}/{total} ({100 * acertos / total:.0f}%) · "
+          f"IC 95% Wilson: [{100 * inferior:.0f}%, {100 * superior:.0f}%]{aviso_largo}")
+
     instaveis = sum(r["tentativas"] > 1 for r in resultados)
     if instaveis:
         print(f"Instabilidade: {instaveis} pergunta(s) precisaram de nova tentativa (erro do servidor/Gemini).")
@@ -201,12 +207,54 @@ def main() -> None:
         print(
             f"Latência média: {media_sem:.1f}s sem histórico (n={len(sem_historico)}) "
             f"vs {media_com:.1f}s com histórico (n={len(com_historico)}), "
-            f"+{media_com - media_sem:.1f}s"
+            f"{media_com - media_sem:+.1f}s"
+        )
+    return acertos, total
+
+
+def main() -> None:
+    pasta = Path(__file__).parent
+    ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawTextHelpFormatter)
+    ap.add_argument("--api", default=API_PADRAO)
+    ap.add_argument("--arquivo", default=str(pasta / "perguntas.json"))
+    ap.add_argument("--pausa", type=float, default=1.0, help="segundos entre perguntas")
+    ap.add_argument("--timeout", type=int, default=120)
+    ap.add_argument("--espera", type=int, default=180, help="segundos esperando o /health do backend")
+    ap.add_argument("--tentativas", type=int, default=3, help="tentativas por pergunta em falha transitória")
+    ap.add_argument("--rodadas", type=int, default=1, help="repete a mesma lista de perguntas N vezes")
+    args = ap.parse_args()
+
+    print(f"Aguardando o backend em {url_saude(args.api)} ...")
+    if not aguardar_backend(args.api, args.espera):
+        sys.exit(
+            "O backend não respondeu em /health. Suba com 'docker-compose up -d backend' e "
+            "espere 'Application startup complete' nos logs antes de avaliar."
         )
 
-    saida = pasta / f"resultados-{time.strftime('%Y%m%d-%H%M%S')}.json"
-    saida.write_text(json.dumps(resultados, ensure_ascii=False, indent=2), encoding="utf-8")
-    print(f"Respostas completas em: {saida}")
+    itens = json.loads(Path(args.arquivo).read_text(encoding="utf-8"))
+    queimados = [item["id"] for item in itens if item.get("queimado")]
+    if queimados:
+        print(f"Aviso: {len(queimados)} item(ns) marcados como queimados (não é mais um resultado "
+              f"limpo): {', '.join(queimados)}")
+
+    acertos_por_rodada = []
+    for rodada in range(1, args.rodadas + 1):
+        if args.rodadas > 1:
+            print(f"\n=== Rodada {rodada}/{args.rodadas} ===")
+        resultados = rodar_rodada(itens, args)
+        acertos, total = relatorio(resultados)
+        acertos_por_rodada.append(acertos)
+
+        saida = pasta / f"resultados-{time.strftime('%Y%m%d-%H%M%S')}.json"
+        saida.write_text(json.dumps(resultados, ensure_ascii=False, indent=2), encoding="utf-8")
+        print(f"Respostas completas em: {saida}")
+
+    if args.rodadas > 1 and total > 0:
+        media = statistics.mean(acertos_por_rodada)
+        desvio = statistics.pstdev(acertos_por_rodada)
+        print(f"\n=== Variação entre as {args.rodadas} rodadas ===")
+        print(f"Acertos por rodada: {acertos_por_rodada} (de {total})")
+        print(f"Média: {media:.1f}/{total} · Desvio padrão: {desvio:.2f}")
 
 
 if __name__ == "__main__":
