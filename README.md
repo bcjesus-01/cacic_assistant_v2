@@ -207,6 +207,32 @@ As perguntas fora do escopo foram recusadas em todas as rodadas, e nenhuma respo
 
 **Perguntas de acompanhamento:** a busca usava só a última mensagem da conversa, então uma pergunta como "e para a matriz 2012?" perdia o assunto. Oito casos de acompanhamento (campo `conversa`) foram adicionados ao conjunto para medir isso: sem reescrever a pergunta antes da busca, 5/8 passavam; com a reescrita (histórico da conversa vira uma pergunta independente, só para a busca — ver "Decisões técnicas"), 7/8 passam, sem regressão nos 26 originais. O custo é uma chamada extra ao Gemini por pergunta de acompanhamento (~1,5-2s).
 
+### Conjunto de avaliação separado (held-out)
+
+Os 26 (+ 8 de acompanhamento) itens acima são um **conjunto de desenvolvimento**: foram escritos a partir do FAQ e já guiaram ajustes de prompt, busca e conteúdo, então uma boa nota ali não garante o mesmo desempenho com perguntas novas. `backend/eval/perguntas_heldout.json` é um segundo conjunto — de 15 a 20 perguntas que o sistema nunca viu, escritas pelo Bruno ou por alunos reais (sem dados pessoais) — que **nunca** deve ser usado para ajustar prompt, FAQ, busca ou `K_BUSCA`/`K_CONTEXTO`. Qualquer item que motive uma correção é marcado como `"queimado": true` (continua no arquivo, como histórico, mas deixa de contar como resultado limpo na próxima rodada oficial).
+
+Schema igual ao de `perguntas.json`, mais:
+
+| Campo | Descrição |
+| --- | --- |
+| `fonte_gabarito` | De onde vem a resposta certa; começa pelo nome do arquivo tal como aparece em `metadata.fonte` no Qdrant (ex.: `"data/regimento.pdf, art. 101"`), para o classificador de erros cruzar automaticamente. |
+| `origem` | `"aluno"` ou `"bruno"`. |
+| `queimado` | Booleano; `false` até o item motivar uma correção. |
+
+`backend/eval/perguntas_heldout.exemplo.json` documenta os campos com um exemplo de cada tipo (resposta, recusa, acompanhamento) — não é lido por nenhum script. `backend/eval/validar_heldout.py` confere o esquema, ids únicos e que nenhuma pergunta é repetida ou quase igual a uma do conjunto de desenvolvimento:
+
+```bash
+uv run python eval/validar_heldout.py
+```
+
+Para rodar (o arquivo começa vazio; veja o exemplo para preencher):
+
+```bash
+uv run python eval/avaliar.py --arquivo eval/perguntas_heldout.json --rodadas 3
+```
+
+`--rodadas N` repete a mesma lista de perguntas N vezes e relata a variação (média e desvio padrão dos acertos) entre rodadas. O relatório mostra o **intervalo de confiança de Wilson** ao lado da taxa simples — com 15 a 20 itens esse intervalo é largo (ex.: 7/8 acertos dá algo como 53%-98%), e é por isso: uma taxa pontual sozinha, com tão poucos itens, não diz muito sobre o desempenho real. Para entender cada erro, `eval/classificar_erros.py <resultado.json>` separa, para cada falha, se (a) a busca não achou o trecho certo, (b) o trecho estava no contexto e o modelo respondeu errado, ou (c) o documento nem está indexado — (d) gabarito errado nunca é automático, o script só reúne os dados para você decidir.
+
 ## Variáveis de ambiente
 
 | Variável | Descrição |
