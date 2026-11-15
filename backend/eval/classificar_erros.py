@@ -28,11 +28,13 @@ from langchain_huggingface import HuggingFaceEmbeddings
 from langchain_qdrant import QdrantVectorStore
 
 # Reaproveita a lógica pura de seleção de contexto do agente (backend/ precisa estar no
-# sys.path; scripts em eval/ não ganham isso automaticamente, só a própria pasta).
+# sys.path; scripts em eval/ não ganham isso automaticamente, só a própria pasta). Isso também
+# deixa eval.avaliar importável abaixo (como pacote), tanto rodando este arquivo direto quanto
+# importado pelos testes via pytest.
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
-from agent.contexto import selecionar  # noqa: E402
+from agent.contexto import nome_fonte, selecionar  # noqa: E402
 
-from avaliar import contem, normalizar  # mesma pasta (eval/); noqa: E402
+from eval.avaliar import contem, normalizar  # noqa: E402
 
 K_BUSCA = int(os.getenv("RAG_K_BUSCA", 8))
 K_CONTEXTO = int(os.getenv("RAG_K_CONTEXTO", 5))
@@ -70,10 +72,18 @@ def fontes_indexadas(loja: QdrantVectorStore) -> set[str]:
 
 
 def documento_esta_na_base(fonte_gabarito: str, fontes: set[str]) -> bool:
-    """fonte_gabarito deve começar pelo nome do arquivo indexado (convenção pedida ao
-    preencher o held-out); por isso basta checar se algum nome indexado aparece no texto."""
+    """fonte_gabarito cita o documento em texto legível (ex.: "Coletânea da Legislação da
+    Graduação"), não o caminho bruto ("data/legislacao_graduacao.pdf"). Por isso a comparação
+    usa o mesmo nome "legível" que agent.contexto.nome_fonte já gera para os rótulos
+    [Fonte: X] do prompt: considera encontrado se todas as palavras relevantes (>2 letras)
+    desse nome aparecem no texto de fonte_gabarito.
+    """
     alvo = normalizar(fonte_gabarito)
-    return any(normalizar(fonte) in alvo for fonte in fontes)
+    for fonte in fontes:
+        palavras = [p for p in normalizar(nome_fonte({"fonte": fonte})).split() if len(p) > 2]
+        if palavras and all(p in alvo for p in palavras):
+            return True
+    return False
 
 
 def fatos_presentes(fatos: list[list[str]], texto: str) -> bool:

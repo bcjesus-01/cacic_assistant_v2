@@ -32,7 +32,10 @@ import uuid
 from collections import defaultdict
 from pathlib import Path
 
-from estatistica import intervalo_wilson
+try:
+    from estatistica import intervalo_wilson  # rodando direto: python eval/avaliar.py
+except ImportError:
+    from eval.estatistica import intervalo_wilson  # importado como pacote (ex.: nos testes)
 
 API_PADRAO = "http://localhost:8000/api/v1/chat/stream"
 MARCA_RECUSA = "nao encontrei essa informacao"
