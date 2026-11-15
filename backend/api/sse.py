@@ -4,6 +4,8 @@ import json
 
 DONE = "data: [DONE]\n\n"
 MENSAGEM_ERRO = "Não consegui gerar a resposta agora. Tente novamente em instantes."
+# Avisa o cliente de que o texto parcial deve ser descartado (modelo de reserva assumiu).
+RESET = 'event: reset\ndata: ""\n\n'
 
 
 def extrair_texto(content) -> str:

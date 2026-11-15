@@ -1,6 +1,6 @@
 import json
 
-from api.sse import DONE, MENSAGEM_ERRO, extrair_texto, sse
+from api.sse import DONE, MENSAGEM_ERRO, RESET, extrair_texto, sse
 
 
 def test_extrair_texto_de_string():
@@ -79,3 +79,10 @@ def test_stream_com_erro_termina_com_done():
     assert [nome for nome, _ in eventos] == ["message", "error", "message"]
     assert json.loads(eventos[1][1]) == MENSAGEM_ERRO
     assert eventos[-1][1] == "[DONE]"
+
+
+def test_reset_e_um_evento_valido_com_dados_vazios():
+    eventos = _parse_sse(sse("parcial") + RESET + sse("completa") + DONE)
+
+    assert [nome for nome, _ in eventos] == ["message", "reset", "message", "message"]
+    assert json.loads(eventos[1][1]) == ""

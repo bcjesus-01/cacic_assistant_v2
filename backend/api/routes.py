@@ -9,7 +9,8 @@ from psycopg_pool import AsyncConnectionPool
 
 from agent.graph import DB_URI, workflow
 from api.schemas import ChatRequest
-from api.sse import DONE, MENSAGEM_ERRO, extrair_texto, sse
+from api.controle_stream import ControleStream
+from api.sse import DONE, MENSAGEM_ERRO, RESET, extrair_texto, sse
 
 logger = logging.getLogger(__name__)
 router = APIRouter()
@@ -21,6 +22,7 @@ async def chat_stream(request: ChatRequest):
     mensagem_humana = HumanMessage(content=request.message)
 
     async def gerador_eventos():
+        controle = ControleStream()
         try:
             async with AsyncConnectionPool(
                 conninfo=DB_URI, max_size=10, kwargs={"autocommit": True}
@@ -32,6 +34,16 @@ async def chat_stream(request: ChatRequest):
                 async for event in app_grafo.astream_events(
                     {"messages": [mensagem_humana]}, config, version="v2"
                 ):
+                    if event["event"] == "on_chat_model_start":
+                        if controle.iniciar_modelo():
+                            # O modelo de reserva assumiu depois de tokens já enviados.
+                            yield RESET
+                        if controle.reserva_acionada:
+                            logger.warning(
+                                "Modelo de reserva acionado (thread_id=%s)", request.thread_id
+                            )
+                        continue
+
                     if event["event"] != "on_chat_model_stream":
                         continue
 
@@ -41,6 +53,7 @@ async def chat_stream(request: ChatRequest):
 
                     token = extrair_texto(getattr(chunk, "content", chunk))
                     if token:
+                        controle.registrar_token()
                         yield sse(token)
                         await asyncio.sleep(0)  # cede o loop sem atrasar o stream
 
@@ -48,7 +61,11 @@ async def chat_stream(request: ChatRequest):
 
         except Exception:
             # O detalhe técnico fica só no log do servidor; o cliente recebe uma mensagem genérica.
-            logger.exception("Falha ao gerar a resposta (thread_id=%s)", request.thread_id)
+            logger.exception(
+                "Falha ao gerar a resposta (thread_id=%s, tokens_enviados=%d)",
+                request.thread_id,
+                controle.tokens,
+            )
             yield sse(MENSAGEM_ERRO, event="error")
             yield DONE
 

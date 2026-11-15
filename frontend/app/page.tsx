@@ -33,6 +33,8 @@ export default function Home() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [falhou, setFalhou] = useState(false);
+  const ultimaPerguntaRef = useRef<string>("");
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const sessionIdRef = useRef<string>("");
 
@@ -54,16 +56,15 @@ export default function Home() {
       /* sem localStorage: o id vale só até recarregar a página */
     }
     setMessages([]);
+    setFalhou(false);
   };
 
-  const sendMessage = async (e: FormEvent) => {
-    e.preventDefault();
-    if (!input.trim() || isLoading) return;
-
-    const userMsg: Message = { role: "user", content: input.trim() };
+  const enviar = async (texto: string) => {
+    const userMsg: Message = { role: "user", content: texto };
+    ultimaPerguntaRef.current = texto;
     setMessages((prev) => [...prev, userMsg, { role: "assistant", content: "" }]);
-    setInput("");
     setIsLoading(true);
+    setFalhou(false);
 
     const updateAssistant = (text: string) =>
       setMessages((prev) => {
@@ -123,6 +124,9 @@ export default function Home() {
 
         if (nomeEvento === "error") {
           stream.erro = conteudo;
+        } else if (nomeEvento === "reset") {
+          // O modelo de reserva assumiu: descarta o texto parcial e recomeça.
+          stream.texto = "";
         } else {
           stream.texto += conteudo;
         }
@@ -154,17 +158,36 @@ export default function Home() {
         updateAssistant(
           stream.texto ? `${stream.texto}\n\n${stream.erro}` : stream.erro
         );
+        setFalhou(true);
       } else if (!stream.texto) {
         updateAssistant("Não recebi resposta do servidor. Tente novamente.");
+        setFalhou(true);
       } else {
         updateAssistant(stream.texto);
       }
     } catch (error) {
       console.error("Erro no chat:", error);
       updateAssistant("Erro de conexão com o servidor. Verifique o backend.");
+      setFalhou(true);
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const sendMessage = (e: FormEvent) => {
+    e.preventDefault();
+    const texto = input.trim();
+    if (!texto || isLoading) return;
+    setInput("");
+    void enviar(texto);
+  };
+
+  // Reenvia a última pergunta. A tentativa que falhou sai da tela; o histórico do servidor
+  // pode manter a pergunta repetida, o que não afeta a resposta.
+  const tentarNovamente = () => {
+    if (isLoading || !ultimaPerguntaRef.current) return;
+    setMessages((prev) => prev.slice(0, -2));
+    void enviar(ultimaPerguntaRef.current);
   };
 
   return (
@@ -214,6 +237,17 @@ export default function Home() {
               </div>
             </div>
           ))}
+          {falhou && !isLoading && (
+            <div className="flex justify-start">
+              <button
+                type="button"
+                onClick={tentarNovamente}
+                className="text-sm text-blue-800 border border-blue-300 rounded-lg px-3 py-1 hover:bg-blue-50 transition-colors"
+              >
+                Tentar novamente
+              </button>
+            </div>
+          )}
           <div ref={messagesEndRef} />
         </div>
 

@@ -211,7 +211,9 @@ As perguntas fora do escopo foram recusadas em todas as rodadas, e nenhuma respo
 | --- | --- |
 | `GOOGLE_API_KEY` | Chave da API do Google Gemini |
 | `POSTGRES_PASSWORD` | Senha do PostgreSQL (usada pelo banco e montada na `DATABASE_URL`) |
-| `GEMINI_MODEL` | Opcional. Modelo do Gemini (padrão: `gemini-3.5-flash-lite`) |
+| `GEMINI_MODEL` | Opcional. Modelo principal do Gemini (padrão: `gemini-3.5-flash-lite`) |
+| `GEMINI_FALLBACK_MODEL` | Opcional. Modelo de reserva, acionado quando o principal falha (padrão: nenhum, sem reserva) |
+| `GEMINI_MAX_RETRIES` | Opcional. Tentativas do modelo principal antes de desistir (padrão: `1` com reserva configurada, `3` sem reserva) |
 | `GEMINI_MAX_OUTPUT_TOKENS` | Opcional. Limite de tokens da resposta (padrão: `4096`) |
 | `RAG_K_BUSCA` | Opcional. Trechos buscados no Qdrant (padrão: `8`) |
 | `RAG_K_CONTEXTO` | Opcional. Trechos enviados ao modelo, depois de remover duplicados (padrão: `5`) |
@@ -253,14 +255,13 @@ Também há `GET /health`, que responde `{"status": "ok"}`.
 
 ## Limitações conhecidas
 
-- A API do Gemini pode responder `503 UNAVAILABLE` em momentos de alta demanda. Hoje a falha no meio do streaming aparece como texto cortado seguido de uma mensagem de erro.
+- **503 do Gemini (mitigado):** a API pode responder `503 UNAVAILABLE` em momentos de alta demanda. Antes do primeiro token, o backend falha rápido e troca para o `GEMINI_FALLBACK_MODEL`, sem o aluno perceber. Se a troca acontecer depois de tokens já enviados, a rota emite um evento SSE `reset` e o frontend descarta o texto parcial antes de mostrar a resposta da reserva. Se tudo falhar, o frontend mostra uma mensagem amigável com o botão "Tentar novamente" (que reenvia a última pergunta; o histórico salvo no servidor pode manter a pergunta repetida, o que não afeta a resposta).
 - Documentos oficiais mais antigos podem contradizer práticas atuais; a base só reflete o que está indexado, e o FAQ é a referência para procedimentos recentes.
 - A busca é apenas semântica (densa), e a pontuação de similaridade entre trechos relevantes e irrelevantes é próxima, o que pede um reranker em perguntas mais difíceis.
 - O conjunto de avaliação é pequeno e foi derivado do FAQ (ver a seção de Avaliação).
 
 ## Próximos passos
 
-- Modelo reserva e nova tentativa automática quando o Gemini responder 503, e botão "tentar novamente" no frontend.
 - Segundo conjunto de avaliação, com perguntas novas de alunos que não estejam no FAQ.
 - Pool de conexões e grafo compilados uma única vez no `lifespan` do FastAPI.
 - Reranker e busca híbrida (semântica + palavras-chave), medidos pela avaliação.
