@@ -1,0 +1,71 @@
+{
+  "instrucoes": [
+    "Este arquivo é só um modelo — não é lido por avaliar.py nem por nenhum script.",
+    "As perguntas de verdade vão em perguntas_heldout.json (mesma pasta), que começa vazio: [].",
+    "Schema igual ao de perguntas.json (id, categoria, tipo, pergunta, esperado, fatos quando",
+    "tipo == 'resposta'), mais três campos novos: fonte_gabarito, origem e queimado.",
+    "",
+    "fonte_gabarito (obrigatório em todo item): de onde vem a resposta certa. Comece pelo nome",
+    "do arquivo exatamente como aparece em metadata.fonte no Qdrant — rode",
+    "'uv run python eval/diagnosticar.py \"sua pergunta\"' e copie o nome que aparece entre",
+    "colchetes na saída (ex.: 'data/regimento.pdf', 'docs/FAQ_CACIC.md'). O resto do texto",
+    "(artigo, seção) é só para leitura humana. O script eval/classificar_erros.py usa esse",
+    "nome para separar 'a busca não achou' de 'o documento não está na base'.",
+    "",
+    "origem: 'aluno' (pergunta real de algum estudante, sem nome nem qualquer dado pessoal)",
+    "ou 'bruno' (você escreveu).",
+    "",
+    "queimado: comece sempre com false. Só muda para true depois que o item motivar uma",
+    "correção de prompt/busca/FAQ — a partir daí ele deixa de ser um resultado 'limpo' para",
+    "a próxima rodada oficial, mas continua no arquivo como histórico.",
+    "",
+    "IMPORTANTE: a resposta esperada e os 'fatos' vêm dos documentos oficiais (ou do FAQ, mas",
+    "sempre confirmando contra o regimento se houver conflito) — nunca da resposta que o chat",
+    "deu. Esse é o ponto de ter um conjunto separado.",
+    "",
+    "Distribuição sugerida para as 15-20 perguntas (ver docs/ROADMAP.md, Etapa 3):",
+    "- 2-3 fora do escopo (recusa esperada)",
+    "- 2-3 informais ou com erro de digitação",
+    "- 3-5 cuja resposta está nos PDFs oficiais e não no FAQ",
+    "- resto: perguntas normais, variadas por categoria",
+    "- pelo menos 3 conversas de acompanhamento (campo 'conversa', ver exemplo_conversa abaixo)"
+  ],
+  "exemplo_resposta": {
+    "id": "ho-exemplo-resposta",
+    "categoria": "Horas complementares",
+    "tipo": "resposta",
+    "origem": "bruno",
+    "fonte_gabarito": "data/regimento.pdf, art. XX (confirme o número do artigo de verdade)",
+    "pergunta": "Pergunta real aqui, como um aluno perguntaria.",
+    "esperado": "Resumo da resposta certa, tirado do documento citado em fonte_gabarito.",
+    "fatos": [
+      ["alternativa 1 do fato", "alternativa equivalente"],
+      ["outro fato que a resposta precisa conter"]
+    ],
+    "queimado": false
+  },
+  "exemplo_recusa": {
+    "id": "ho-exemplo-recusa",
+    "categoria": "Fora do escopo",
+    "tipo": "recusa",
+    "origem": "aluno",
+    "fonte_gabarito": "nenhuma — é justamente isso que torna a recusa a resposta certa",
+    "pergunta": "Pergunta fora do escopo acadêmico ou sobre algo que não está nos documentos.",
+    "esperado": "Deve recusar (informação inexistente nos documentos oficiais).",
+    "queimado": false
+  },
+  "exemplo_conversa": {
+    "id": "ho-exemplo-acompanhamento",
+    "categoria": "Trancamento e abandono",
+    "tipo": "resposta",
+    "origem": "bruno",
+    "fonte_gabarito": "data/regimento.pdf, art. XX",
+    "conversa": [
+      "Primeira pergunta da conversa, que estabelece o assunto."
+    ],
+    "pergunta": "Pergunta de acompanhamento curta, que só faz sentido com a conversa acima (ex.: 'e no meu caso?', 'e se eu já tiver trancado uma vez?').",
+    "esperado": "Resumo da resposta certa.",
+    "fatos": [["fato esperado"]],
+    "queimado": false
+  }
+}
