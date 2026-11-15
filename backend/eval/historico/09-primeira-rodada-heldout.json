@@ -1,0 +1,496 @@
+[
+  {
+    "id": "ho-sem-rendimento",
+    "categoria": "Notas",
+    "tipo": "resposta",
+    "pergunta": "Qual a nota mínima no período para eu poder fazer a prova final?",
+    "esperado": "Resultado inferior a 1,6 no período impede o exame final (situação 'sem rendimento').",
+    "fatos": [
+      [
+        "1,6",
+        "1.6",
+        "1,60"
+      ]
+    ],
+    "fonte_gabarito": "Regimento Geral da UESC (2006), Art. 119, II (também na Coletânea da Legislação da Graduação (2016), p. 11)",
+    "perfil": "pdf",
+    "origem": "bruno",
+    "queimado": false,
+    "resposta": "Para poder fazer o exame final, você precisa obter média do período igual ou superior a 1,7 e inferior a 7,0. Se a média for inferior a 1,7, você não poderá realizar o exame final.",
+    "passou": false,
+    "motivo": "faltou: 1,6",
+    "segundos": 5.0,
+    "tentativas": 1
+  },
+  {
+    "id": "ho-optativa-eletiva",
+    "categoria": "Currículo",
+    "tipo": "resposta",
+    "pergunta": "Qual a diferença entre disciplina optativa e disciplina eletiva?",
+    "esperado": "Optativas aprofundam e ampliam a formação na área específica, de livre escolha do aluno; eletivas ampliam o perfil cultural do aluno.",
+    "fatos": [
+      [
+        "aprofund",
+        "area especifica",
+        "ampliar a formacao"
+      ],
+      [
+        "perfil cultural",
+        "cultural",
+        "cultura"
+      ]
+    ],
+    "fonte_gabarito": "Regimento Geral da UESC (2006), Art. 107, parágrafo único, II e III",
+    "perfil": "pdf",
+    "origem": "bruno",
+    "queimado": false,
+    "resposta": "As disciplinas optativas destinam-se a aprofundar e ampliar a formação do aluno na área específica, sendo de sua livre escolha e observando os requisitos e créditos para integralizar o currículo. As disciplinas eletivas destinam-se a ampliar o perfil cultural do aluno, correspondendo a saberes de outros cursos, respeitado o número de vagas e o limite de uma atividade por período.",
+    "passou": true,
+    "motivo": "ok",
+    "segundos": 2.3,
+    "tentativas": 1
+  },
+  {
+    "id": "ho-colacao",
+    "categoria": "Colação e diploma",
+    "tipo": "resposta",
+    "pergunta": "Como funciona a colação de grau?",
+    "esperado": "Para os concluintes que a requererem, em ato solene, na data designada pela Reitoria.",
+    "fatos": [
+      [
+        "ato solene",
+        "solene"
+      ],
+      [
+        "reitoria"
+      ]
+    ],
+    "fonte_gabarito": "Regimento Geral da UESC (2006), Art. 130",
+    "perfil": "pdf",
+    "origem": "bruno",
+    "queimado": false,
+    "resposta": "A colação de grau dos concluintes que a requererem é realizada em ato solene.\nA data é designada pela Reitoria, conforme estabelecido em legislação específica.",
+    "passou": true,
+    "motivo": "ok",
+    "segundos": 2.0,
+    "tentativas": 1
+  },
+  {
+    "id": "ho-extensao-aproveitamento",
+    "categoria": "Aproveitamento de estudos",
+    "tipo": "resposta",
+    "pergunta": "Fiz um curso de extensão na UESC com a mesma carga horária de uma disciplina da graduação. Posso aproveitar isso no meu curso?",
+    "esperado": "Não: é vedado o aproveitamento de estudos cursados em nível de extensão, mesmo com conteúdo e carga horária correspondentes.",
+    "fatos": [
+      [
+        "vedado",
+        "proibido",
+        "nao e permitido",
+        "nao pode",
+        "nao e possivel",
+        "nao sera concedido",
+        "nao e concedido",
+        "nao podem"
+      ]
+    ],
+    "fonte_gabarito": "Regimento Geral da UESC (2006), Art. 126",
+    "perfil": "pdf",
+    "origem": "bruno",
+    "queimado": false,
+    "resposta": "Desculpe, não encontrei essa informação nos documentos oficiais do sistema. Recomendo procurar a diretoria do CACIC.",
+    "passou": false,
+    "motivo": "recusou (documento ausente ou busca falhou)",
+    "segundos": 1.9,
+    "tentativas": 1
+  },
+  {
+    "id": "ho-domiciliar-requerimento",
+    "categoria": "Exercícios domiciliares",
+    "tipo": "resposta",
+    "pergunta": "Como peço o regime de exercícios domiciliares? Preciso levar algum documento?",
+    "esperado": "Requerimento no Protocolo Geral, antes do afastamento, instruído com laudo médico.",
+    "fatos": [
+      [
+        "protocolo"
+      ],
+      [
+        "laudo"
+      ]
+    ],
+    "fonte_gabarito": "Coletânea da Legislação da Graduação (2016), Resolução CONSEPE 014/1996, Art. 3º e §1º",
+    "perfil": "pdf",
+    "origem": "bruno",
+    "queimado": false,
+    "resposta": "Desculpe, não encontrei essa informação nos documentos oficiais do sistema. Recomendo procurar a diretoria do CACIC.",
+    "passou": false,
+    "motivo": "recusou (documento ausente ou busca falhou)",
+    "segundos": 1.5,
+    "tentativas": 1
+  },
+  {
+    "id": "ho-mais-futuro-valor",
+    "categoria": "Mais Futuro",
+    "tipo": "resposta",
+    "pergunta": "Quanto o Mais Futuro paga por mês?",
+    "esperado": "Edital 2026.2: R$ 400,00 no Perfil Básico e R$ 800,00 no Perfil Moradia; valor variável no Perfil Complementar.",
+    "fatos": [
+      [
+        "400"
+      ],
+      [
+        "800"
+      ]
+    ],
+    "fonte_gabarito": "Edital SEC nº 15/2026 (Mais Futuro), item 5",
+    "perfil": "pdf",
+    "origem": "bruno",
+    "queimado": false,
+    "resposta": "Desculpe, não encontrei essa informação nos documentos oficiais do sistema. Recomendo procurar a diretoria do CACIC.",
+    "passou": false,
+    "motivo": "recusou (documento ausente ou busca falhou)",
+    "segundos": 1.9,
+    "tentativas": 1
+  },
+  {
+    "id": "ho-extensao-pei",
+    "categoria": "Extensão",
+    "tipo": "resposta",
+    "pergunta": "Em quais semestres ficam as disciplinas de Projeto Extensionista Integrador?",
+    "esperado": "PEI I no 3º semestre, PEI II no 5º e PEI III no 8º, com 90 h cada (270 h no total).",
+    "fatos": [
+      [
+        "3o",
+        "terceiro",
+        "3 semestre"
+      ],
+      [
+        "5o",
+        "quinto",
+        "5 semestre"
+      ],
+      [
+        "8o",
+        "oitavo",
+        "8 semestre"
+      ]
+    ],
+    "fonte_gabarito": "Resolução CONSEPE 11/2023, Art. 4º (tabela)",
+    "perfil": "pdf",
+    "origem": "bruno",
+    "queimado": false,
+    "resposta": "As disciplinas de Projeto Extensionista Integrador ficam nos seguintes semestres:\n\n- Projeto Extensionista Integrador I (PEI I): III semestre\n- Projeto Extensionista Integrador II (PEI II): V semestre\n- Projeto Extensionista Integrador III (PEI III): VIII semestre",
+    "passou": false,
+    "motivo": "faltou: 3o, 5o, 8o",
+    "segundos": 2.0,
+    "tentativas": 1
+  },
+  {
+    "id": "ho-estagio-carga-2023",
+    "categoria": "Estágio",
+    "tipo": "resposta",
+    "pergunta": "Entrei na UESC em 2023.1. Qual a carga horária da disciplina de Estágio Supervisionado?",
+    "esperado": "180 horas e 4 créditos, no VIII semestre (regulamento para ingressantes a partir de 2023.1; o regulamento de 2009 previa 450 h e 10 créditos).",
+    "fatos": [
+      [
+        "180"
+      ]
+    ],
+    "fonte_gabarito": "Resolução CONSEPE 12/2023, Art. 3º (a Res. CONSEPE 88/2009 trazia 450 h)",
+    "perfil": "pdf",
+    "origem": "bruno",
+    "queimado": false,
+    "resposta": "A carga horária da disciplina de Estágio Supervisionado é de 180 horas e 4 créditos.",
+    "passou": true,
+    "motivo": "ok",
+    "segundos": 1.6,
+    "tentativas": 1
+  },
+  {
+    "id": "ho-estagio-prerequisitos",
+    "categoria": "Estágio",
+    "tipo": "resposta",
+    "pergunta": "O que preciso ter feito para poder me matricular em Estágio Supervisionado?",
+    "esperado": "Aprovação em todas as disciplinas do currículo até o VI semestre, mais Engenharia de Software e Empreendedor em Informática.",
+    "fatos": [
+      [
+        "vi semestre",
+        "6o semestre",
+        "sexto semestre",
+        "6 semestre"
+      ],
+      [
+        "engenharia de software"
+      ]
+    ],
+    "fonte_gabarito": "Resolução CONSEPE 12/2023, Art. 10 (igual no Art. 10 da Res. 88/2009)",
+    "perfil": "pdf",
+    "origem": "bruno",
+    "queimado": false,
+    "resposta": "Para se matricular na disciplina Estágio Supervisionado, você precisa cumprir os seguintes requisitos:\n\n- Ser aprovado em todas as disciplinas estabelecidas pelo currículo até o sexto semestre.\n- Ser aprovado na disciplina Engenharia de Software.\n- Ser aprovado na disciplina Empreendedor em Informática.",
+    "passou": true,
+    "motivo": "ok",
+    "segundos": 1.8,
+    "tentativas": 1
+  },
+  {
+    "id": "ho-calendario-trancamento",
+    "categoria": "Calendário",
+    "tipo": "resposta",
+    "pergunta": "Qual o prazo para trancar disciplina no semestre 2026.2?",
+    "esperado": "De 10 de agosto a 11 de setembro de 2026 (solicitação de trancamento de matrícula total ou parcial).",
+    "fatos": [
+      [
+        "11 de setembro",
+        "11/09",
+        "11/9",
+        "11 setembro"
+      ]
+    ],
+    "fonte_gabarito": "Calendário Acadêmico 2026 (Res. CONSEPE 039/2025), p. 8 e 9",
+    "perfil": "pdf",
+    "origem": "bruno",
+    "queimado": false,
+    "resposta": "Desculpe, não encontrei essa informação nos documentos oficiais do sistema. Recomendo procurar a diretoria do CACIC.",
+    "passou": false,
+    "motivo": "recusou (documento ausente ou busca falhou)",
+    "segundos": 2.0,
+    "tentativas": 1
+  },
+  {
+    "id": "ho-estatuto-candidatura",
+    "categoria": "Estatuto do CACIC",
+    "tipo": "resposta",
+    "pergunta": "Quem não pode se candidatar à diretoria do CACIC?",
+    "esperado": "Associados expulsos ou suspensos, quem estiver no último semestre letivo e os membros do Conselho Fiscal.",
+    "fatos": [
+      [
+        "expuls",
+        "suspens"
+      ],
+      [
+        "ultimo semestre"
+      ],
+      [
+        "conselho fiscal"
+      ]
+    ],
+    "fonte_gabarito": "Estatuto do CACIC, Art. 43 (revisar se a reforma do estatuto mudar a regra)",
+    "perfil": "pdf",
+    "origem": "bruno",
+    "queimado": false,
+    "resposta": "São inelegíveis para os cargos da Diretoria do CACIC:\n\n- Associados que tenham sido expulsos ou estejam suspensos\n- Alunos que estejam em seu último semestre letivo no momento da eleição\n- Membros do Conselho Fiscal",
+    "passou": true,
+    "motivo": "ok",
+    "segundos": 3.2,
+    "tentativas": 1
+  },
+  {
+    "id": "ho-parafrase-acc",
+    "categoria": "Horas complementares",
+    "tipo": "resposta",
+    "pergunta": "Quantas horas de ACC eu preciso fazer pra me formar? Entrei em 2023.",
+    "esperado": "Matriz 2023: 120 h de horas complementares e 80 h de extensão (mesmo fato do FAQ, em outra redação: mede vocabulário, não conteúdo novo).",
+    "fatos": [
+      [
+        "120"
+      ],
+      [
+        "80"
+      ]
+    ],
+    "fonte_gabarito": "FAQ CACIC (decisão do Bruno); 80 h de Ação de Extensão em Res. CONSEPE 11/2023, Art. 2º, §2º",
+    "perfil": "parafrase_faq",
+    "origem": "bruno",
+    "queimado": false,
+    "resposta": "Na matriz de 2023, são necessárias 120 horas complementares e 80 horas de extensão.",
+    "passou": true,
+    "motivo": "ok",
+    "segundos": 1.6,
+    "tentativas": 1
+  },
+  {
+    "id": "ho-informal-divulgacao",
+    "categoria": "Notas",
+    "tipo": "resposta",
+    "pergunta": "em qts dias o prof tem q divulgar a nota da prova?",
+    "esperado": "Até 8 dias a contar da data da verificação, com devolução dos trabalhos.",
+    "fatos": [
+      [
+        "8",
+        "oito"
+      ]
+    ],
+    "fonte_gabarito": "Regimento Geral da UESC (2006), Art. 113",
+    "perfil": "informal",
+    "origem": "bruno",
+    "queimado": false,
+    "resposta": "A divulgação dos resultados das avaliações e a devolução dos trabalhos escolares ocorrerão em até oito dias a contar da data da verificação.",
+    "passou": true,
+    "motivo": "ok",
+    "segundos": 1.7,
+    "tentativas": 1
+  },
+  {
+    "id": "ho-informal-cola",
+    "categoria": "Regime disciplinar",
+    "tipo": "resposta",
+    "pergunta": "se eu for pego colando em prova o q acontece cmg?",
+    "esperado": "Suspensão de 3 a 30 dias por fraude ou tentativa de fraude em provas e exames, após processo administrativo disciplinar.",
+    "fatos": [
+      [
+        "suspensao",
+        "suspenso"
+      ],
+      [
+        "30",
+        "trinta"
+      ]
+    ],
+    "fonte_gabarito": "Regimento Geral da UESC (2006), Art. 178, II, c",
+    "perfil": "informal",
+    "origem": "bruno",
+    "queimado": false,
+    "resposta": "Se você for pego em fraude ou tentativa de fraude em provas e exames escolares, a punição prevista é a suspensão de três a trinta dias. A aplicação da sanção ocorre após a conclusão de um processo administrativo ou disciplinar conduzido por uma comissão designada pelo Reitor.",
+    "passou": true,
+    "motivo": "ok",
+    "segundos": 1.6,
+    "tentativas": 1
+  },
+  {
+    "id": "ho-conv-domiciliar",
+    "categoria": "Exercícios domiciliares",
+    "tipo": "resposta",
+    "conversa": [
+      "O que é o regime de exercícios domiciliares?"
+    ],
+    "pergunta": "E se eu estiver grávida, a partir de quando posso pedir?",
+    "esperado": "Gestante: a partir do início do oitavo mês de gravidez, com afastamento de três meses (ou antes, em situações excepcionais, ou depois do parto).",
+    "fatos": [
+      [
+        "oitavo mes",
+        "8o mes",
+        "8º mes"
+      ],
+      [
+        "tres meses",
+        "3 meses"
+      ]
+    ],
+    "fonte_gabarito": "Coletânea da Legislação da Graduação (2016), Resolução CONSEPE 014/1996, Art. 2º, II e Art. 3º, §1º, b",
+    "perfil": "acompanhamento",
+    "origem": "bruno",
+    "queimado": false,
+    "resposta": "O pedido pode ser feito a partir do início do oitavo mês de gestação, ou antes dele em situações excepcionais de gravidez, assim como após o parto.",
+    "passou": false,
+    "motivo": "faltou: tres meses",
+    "segundos": 3.0,
+    "tentativas": 1
+  },
+  {
+    "id": "ho-conv-revisao",
+    "categoria": "Notas",
+    "tipo": "resposta",
+    "conversa": [
+      "Não concordei com a nota que tirei no exame final. Posso pedir revisão?"
+    ],
+    "pergunta": "Qual o prazo e quem faz a nova correção?",
+    "esperado": "Recurso fundamentado até três dias úteis da divulgação, dirigido ao Diretor do Departamento; se mantida a situação, comissão de dois docentes atribui notas e o resultado é a média aritmética das três notas.",
+    "fatos": [
+      [
+        "tres dias uteis",
+        "3 dias uteis"
+      ],
+      [
+        "comissao",
+        "dois docentes",
+        "dois professores"
+      ]
+    ],
+    "fonte_gabarito": "Regimento Geral da UESC (2006), Art. 115, §2º",
+    "perfil": "acompanhamento",
+    "origem": "bruno",
+    "queimado": false,
+    "resposta": "O prazo para requerer o recurso de revisão é de até três dias úteis, contados da divulgação dos resultados.\nO pedido é dirigido ao Diretor do Departamento, que o encaminha ao professor da disciplina para proceder à revisão de forma fundamentada.\nCaso a situação seja mantida, o Diretor constitui uma comissão de dois docentes da área para realizar uma nova revisão.\nCada docente da comissão atribui uma nota ao exame.\nO resultado final passa a ser a média aritmética das três notas.",
+    "passou": true,
+    "motivo": "ok",
+    "segundos": 2.6,
+    "tentativas": 1
+  },
+  {
+    "id": "ho-conv-advertencia",
+    "categoria": "Regime disciplinar",
+    "tipo": "resposta",
+    "conversa": [
+      "Quais são as penalidades disciplinares que um aluno pode receber?"
+    ],
+    "pergunta": "E a advertência fica registrada no meu histórico escolar?",
+    "esperado": "Não: o registro é feito em documento próprio, não consta do histórico; a advertência é cancelada se não houver reincidência em um ano.",
+    "fatos": [
+      [
+        "nao consta",
+        "nao fica",
+        "nao aparece",
+        "documento proprio",
+        "nao entra",
+        "nao e registrad"
+      ]
+    ],
+    "fonte_gabarito": "Regimento Geral da UESC (2006), Art. 179 e parágrafo único",
+    "perfil": "acompanhamento",
+    "origem": "bruno",
+    "queimado": false,
+    "resposta": "O registro da penalidade é feito em documento próprio e não consta do histórico escolar do aluno.",
+    "passou": true,
+    "motivo": "ok",
+    "segundos": 2.5,
+    "tentativas": 1
+  },
+  {
+    "id": "ho-fora-restaurante",
+    "categoria": "Fora do escopo",
+    "tipo": "recusa",
+    "pergunta": "Pode me indicar um bom restaurante em Ilhéus?",
+    "esperado": "Deve recusar (fora do escopo).",
+    "fonte_gabarito": "n/a",
+    "perfil": "fora_do_escopo",
+    "origem": "bruno",
+    "queimado": false,
+    "resposta": "Desculpe, não encontrei essa informação nos documentos oficiais do sistema. Recomendo procurar a diretoria do CACIC.",
+    "passou": true,
+    "motivo": "ok",
+    "segundos": 1.6,
+    "tentativas": 1
+  },
+  {
+    "id": "ho-fora-cra-pessoal",
+    "categoria": "Fora do escopo",
+    "tipo": "recusa",
+    "pergunta": "Qual é o meu CRA atual?",
+    "esperado": "Deve recusar: dado pessoal que o assistente não tem.",
+    "fonte_gabarito": "n/a",
+    "perfil": "fora_do_escopo",
+    "origem": "bruno",
+    "queimado": false,
+    "resposta": "Desculpe, não encontrei essa informação nos documentos oficiais do sistema. Recomendo procurar a diretoria do CACIC.",
+    "passou": true,
+    "motivo": "ok",
+    "segundos": 1.7,
+    "tentativas": 1
+  },
+  {
+    "id": "ho-fora-sisu",
+    "categoria": "Fora do escopo",
+    "tipo": "recusa",
+    "pergunta": "Qual vai ser a nota de corte do SISU para Ciência da Computação no ano que vem?",
+    "esperado": "Deve recusar: previsão que não consta nos documentos.",
+    "fonte_gabarito": "n/a",
+    "perfil": "fora_do_escopo",
+    "origem": "bruno",
+    "queimado": false,
+    "resposta": "Desculpe, não encontrei essa informação nos documentos oficiais do sistema. Recomendo procurar a diretoria do CACIC.",
+    "passou": true,
+    "motivo": "ok",
+    "segundos": 1.5,
+    "tentativas": 1
+  }
+]
