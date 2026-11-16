@@ -1,0 +1,664 @@
+[
+  {
+    "id": "mf-quem",
+    "categoria": "Mais Futuro",
+    "tipo": "resposta",
+    "pergunta": "Quem pode receber o Mais Futuro?",
+    "esperado": "Estudantes de baixa renda (questões sociais), como auxílio permanência.",
+    "fatos": [
+      [
+        "baixa renda",
+        "vulnerabilidade",
+        "renda"
+      ]
+    ],
+    "resposta": "O Mais Futuro é destinado a estudantes de baixa renda e em situação de vulnerabilidade socioeconômica. Para receber o auxílio, é preciso estar regularmente matriculado em curso de graduação presencial nas Universidades Públicas Estaduais da Bahia. Além disso, o estudante não pode ter concluído nenhum outro curso de nível superior.",
+    "passou": true,
+    "motivo": "ok",
+    "segundos": 1.3,
+    "tentativas": 1
+  },
+  {
+    "id": "mf-inscricao",
+    "categoria": "Mais Futuro",
+    "tipo": "resposta",
+    "pergunta": "Como faço a inscrição no Mais Futuro?",
+    "esperado": "Pelo Sistema Online do Mais Futuro (site), nas datas do edital.",
+    "fatos": [
+      [
+        "sistema online",
+        "maisfuturo2",
+        "site"
+      ]
+    ],
+    "resposta": "A inscrição no Mais Futuro é semestral e deve ser realizada pelo site oficial do programa. Você deve acessar o endereço eletrônico http://maisfuturo2.educacao.ba.gov.br/acessoestudante para preencher o formulário online. É responsabilidade do estudante conferir e corrigir seus dados pessoais durante todo o processo.",
+    "passou": true,
+    "motivo": "ok",
+    "segundos": 1.5,
+    "tentativas": 1
+  },
+  {
+    "id": "mf-desligamento",
+    "categoria": "Mais Futuro",
+    "tipo": "resposta",
+    "pergunta": "Em que casos eu sou desligado do auxílio Mais Futuro?",
+    "esperado": "Ao atingir 66,66% do curso, trancar mais de 4 disciplinas ou reprovar em mais de 4.",
+    "fatos": [
+      [
+        "66,66",
+        "66.66",
+        "66%"
+      ],
+      [
+        "4 disciplinas",
+        "quatro disciplinas"
+      ]
+    ],
+    "resposta": "O estudante é desligado do auxílio Mais Futuro ao alcançar 66,66% de conclusão do curso, ao trancar mais de 4 disciplinas ou ao reprovar em mais de 4 disciplinas. Também ocorre o desligamento por solicitação expressa do beneficiário ou recusa em assumir vaga de estágio ou projeto vinculado ao curso. Além disso, o descumprimento de critérios de matrícula ou de integralização curricular pode levar ao desligamento.",
+    "passou": true,
+    "motivo": "ok",
+    "segundos": 14.3,
+    "tentativas": 3
+  },
+  {
+    "id": "hc-diferenca",
+    "categoria": "Horas complementares",
+    "tipo": "resposta",
+    "pergunta": "Qual a diferença entre horas complementares e horas de extensão?",
+    "esperado": "Complementares: atividades que complementam a formação (estágios, palestras, IC). Extensão: ações que levam algo acadêmico à comunidade.",
+    "fatos": [
+      [
+        "complementares"
+      ],
+      [
+        "extens"
+      ],
+      [
+        "comunidade"
+      ]
+    ],
+    "resposta": "As horas complementares são atividades que complementam a experiência acadêmica e a formação, como estágios, palestras e iniciações científicas. Já as horas de extensão são dedicadas a ações que levam algo acadêmico para a comunidade, a exemplo de projetos, apresentações ou cursos.",
+    "passou": true,
+    "motivo": "ok",
+    "segundos": 13.5,
+    "tentativas": 3
+  },
+  {
+    "id": "hc-2023",
+    "categoria": "Horas complementares",
+    "tipo": "resposta",
+    "pergunta": "Estou na matriz 2023. Quantas horas complementares preciso para me formar?",
+    "esperado": "120 horas complementares (mais 80 de extensão).",
+    "fatos": [
+      [
+        "120"
+      ]
+    ],
+    "resposta": "Na matriz 2023, você precisa cumprir 120 horas de atividades complementares para se formar. Além disso, são exigidas 80 horas de ações de extensão.",
+    "passou": true,
+    "motivo": "ok",
+    "segundos": 1.5,
+    "tentativas": 1
+  },
+  {
+    "id": "he-2023",
+    "categoria": "Horas complementares",
+    "tipo": "resposta",
+    "pergunta": "Quantas horas de extensão a matriz 2023 exige?",
+    "esperado": "80 horas de extensão.",
+    "fatos": [
+      [
+        "80"
+      ]
+    ],
+    "resposta": "A matriz 2023 exige 80 horas de ações de extensão para a integralização do curso.",
+    "passou": true,
+    "motivo": "ok",
+    "segundos": 3.2,
+    "tentativas": 1
+  },
+  {
+    "id": "hc-2012",
+    "categoria": "Horas complementares",
+    "tipo": "resposta",
+    "pergunta": "E na matriz 2012, quantas horas complementares são necessárias?",
+    "esperado": "200 horas complementares (o gabarito antigo, 'matriz 2022 = 150', estava errado; o assistente e os documentos dizem matriz 2012 = 200).",
+    "fatos": [
+      [
+        "200"
+      ]
+    ],
+    "resposta": "Na matriz 2012, são necessárias 200 horas complementares para a integralização do curso.",
+    "passou": true,
+    "motivo": "ok",
+    "segundos": 1.3,
+    "tentativas": 1
+  },
+  {
+    "id": "camisas",
+    "categoria": "Camisas e canecas",
+    "tipo": "resposta",
+    "pergunta": "Como faço para pedir a camisa do CACIC?",
+    "esperado": "Pedido semestral via Google Forms, pagamento por Pix; escolhe-se tecido, cor, modelo, tamanho e estampa.",
+    "fatos": [
+      [
+        "google forms",
+        "formulario"
+      ],
+      [
+        "pix"
+      ]
+    ],
+    "resposta": "O pedido de camisas é organizado semestralmente pelo CACIC. Você deve realizar o pedido por meio de um formulário do Google Forms e efetuar o pagamento via Pix. No formulário, é possível escolher o tecido, a cor, o modelo, o tamanho e a estampa da camisa.",
+    "passou": true,
+    "motivo": "ok",
+    "segundos": 1.7,
+    "tentativas": 1
+  },
+  {
+    "id": "canecas",
+    "categoria": "Camisas e canecas",
+    "tipo": "resposta",
+    "pergunta": "Como funciona o pedido de canecas?",
+    "esperado": "Pode-se pedir só a caneca, só o tirante ou o combo; as canecas levam o nome do aluno.",
+    "fatos": [
+      [
+        "caneca"
+      ],
+      [
+        "tirante",
+        "combo"
+      ]
+    ],
+    "resposta": "O pedido de canecas é organizado semestralmente pelo CACIC por meio de um formulário do Google Forms. O pagamento é realizado via Pix. Você pode solicitar apenas a caneca, apenas o tirante ou o combo dos dois. As canecas são personalizadas com o nome do aluno.",
+    "passou": true,
+    "motivo": "ok",
+    "segundos": 1.8,
+    "tentativas": 1
+  },
+  {
+    "id": "estagio-vs-tcc",
+    "categoria": "Estágio e TCC",
+    "tipo": "resposta",
+    "pergunta": "O TCC e o estágio são a mesma coisa?",
+    "esperado": "Não. O TCC é obrigatório e não pode ser substituído por estágio; está incluído na disciplina de Estágio Supervisionado.",
+    "fatos": [
+      [
+        "obrigatorio",
+        "obrigatória"
+      ],
+      [
+        "estagio supervisionado",
+        "disciplina de estagio"
+      ]
+    ],
+    "resposta": "Não, o TCC e o estágio não são a mesma coisa. O TCC é obrigatório e está incluído na disciplina de Estágio Supervisionado, mas não pode ser substituído por um estágio. O estágio pode ser regulamentado pela UESC para contabilizar horas complementares e exige um professor orientador.",
+    "passou": true,
+    "motivo": "ok",
+    "segundos": 1.3,
+    "tentativas": 1
+  },
+  {
+    "id": "estagio-disciplina",
+    "categoria": "Estágio e TCC",
+    "tipo": "resposta",
+    "pergunta": "Como funciona a disciplina de Estágio Supervisionado?",
+    "esperado": "É a disciplina de elaboração e avaliação do TCC.",
+    "fatos": [
+      [
+        "tcc",
+        "trabalho de conclusao"
+      ]
+    ],
+    "resposta": "A disciplina de Estágio Supervisionado é voltada para a elaboração e avaliação do TCC, que é obrigatório e não pode ser substituído por um estágio. Para se matricular, o aluno deve ter sido aprovado em todas as disciplinas até o VI semestre, além de Engenharia de Software e Empreendedor em Informática. Durante o período da disciplina, é permitido cursar no máximo outras duas matérias. A carga horária total não deve ultrapassar 38 horas semanais.",
+    "passou": true,
+    "motivo": "ok",
+    "segundos": 1.6,
+    "tentativas": 1
+  },
+  {
+    "id": "estagio-regulamentar",
+    "categoria": "Estágio e TCC",
+    "tipo": "resposta",
+    "pergunta": "Como regulamento meu estágio com a UESC?",
+    "esperado": "Escolher a concedente, fazer pré-projeto e plano de atividades, formalizar com o professor da disciplina e o Colegiado (termo de compromisso). O FAQ acrescenta: exige professor orientador.",
+    "fatos": [
+      [
+        "orientador",
+        "termo de compromisso",
+        "pre-projeto"
+      ]
+    ],
+    "resposta": "Para regulamentar seu estágio na UESC, você precisa de um professor orientador. A efetivação ocorre mediante a assinatura do termo de compromisso, dispensando a necessidade de convênio. Se o estágio for em projetos de pesquisa ou extensão, o orientador será o coordenador ou docente do projeto. Caso seja realizado em outros órgãos da universidade, o supervisor será o professor da disciplina de Estágio Supervisionado. As atividades devem ser obrigatoriamente na área de computação.",
+    "passou": true,
+    "motivo": "ok",
+    "segundos": 1.6,
+    "tentativas": 1
+  },
+  {
+    "id": "tcc",
+    "categoria": "Estágio e TCC",
+    "tipo": "resposta",
+    "pergunta": "Como funciona o TCC em Ciência da Computação?",
+    "esperado": "Pode partir de tema proposto por um professor orientador ou pelo aluno, ou do trabalho em IC, estágio ou extensão.",
+    "fatos": [
+      [
+        "orientador"
+      ],
+      [
+        "tema",
+        "proposta"
+      ]
+    ],
+    "resposta": "O TCC pode ser desenvolvido a partir de uma proposta de tema de um professor orientador ou do próprio aluno. Também é possível realizá-lo por meio de trabalho em iniciação científica, estágio ou projeto de extensão.",
+    "passou": true,
+    "motivo": "ok",
+    "segundos": 1.6,
+    "tentativas": 1
+  },
+  {
+    "id": "ajuste",
+    "categoria": "Matrícula",
+    "tipo": "resposta",
+    "pergunta": "O que é o ajuste de matrícula?",
+    "esperado": "Período após a matrícula web para pedir disciplinas que não foram possíveis (pré-requisito) ou que não apareceram na matrícula; cancelamento e inclusão analisados pelo Colegiado (FAQ + regimento).",
+    "fatos": [
+      [
+        "colegiado",
+        "pre-requisito",
+        "matricula web"
+      ]
+    ],
+    "resposta": "O ajuste de matrícula é o período posterior à matrícula web. Ele permite que os alunos recorram em disciplinas que não puderam cursar devido a pré-requisitos ou que não apareceram na matrícula web normal.",
+    "passou": true,
+    "motivo": "ok",
+    "segundos": 1.6,
+    "tentativas": 1
+  },
+  {
+    "id": "proposta",
+    "categoria": "Matrícula",
+    "tipo": "resposta",
+    "pergunta": "Como funciona a proposta de matrícula? Se eu pedir uma disciplina, entro nela?",
+    "esperado": "A solicitação é feita pela web e pedir a disciplina não garante a vaga (depende da ocupação de vagas/ranking).",
+    "fatos": [
+      [
+        "nao garante",
+        "garant"
+      ]
+    ],
+    "resposta": "A proposta de matrícula é o pedido de vaga nas disciplinas de seu interesse, realizado durante as férias entre os semestres a partir do segundo semestre. Adicionar uma disciplina à proposta não garante a entrada nela. As vagas são preenchidas seguindo um ranking baseado no Coeficiente de Rendimento Acadêmico Acumulado (CRAA) e outros critérios de prioridade.",
+    "passou": true,
+    "motivo": "ok",
+    "segundos": 1.6,
+    "tentativas": 1
+  },
+  {
+    "id": "regularidade",
+    "categoria": "Matrícula",
+    "tipo": "resposta",
+    "pergunta": "O que é ser aluno com matrícula regular?",
+    "esperado": "Semestralização regular: cumprir as disciplinas conforme o fluxograma do curso (FAQ: ser aprovado em todas as do semestre).",
+    "fatos": [
+      [
+        "regular"
+      ],
+      [
+        "fluxograma",
+        "aprovad"
+      ]
+    ],
+    "resposta": "Para o CACIC, a matrícula regular ocorre quando o aluno é aprovado em todas as disciplinas do semestre que está cursando. Alunos que reprovam, abandonam ou adiantam disciplinas tornam-se irregulares e perdem prioridade na matrícula web. Segundo o regimento, também é considerado aluno regular aquele matriculado em disciplinas no período letivo anterior, quem trancou matrícula nos prazos previstos ou quem obteve o trancamento total de matrícula.",
+    "passou": true,
+    "motivo": "ok",
+    "segundos": 2.2,
+    "tentativas": 1
+  },
+  {
+    "id": "trancamento-disc",
+    "categoria": "Trancamento e abandono",
+    "tipo": "resposta",
+    "pergunta": "Como funciona o trancamento de disciplinas?",
+    "esperado": "Requerimento no prazo do Calendário Acadêmico (Regimento, art. 101).",
+    "fatos": [
+      [
+        "prazo",
+        "calendario"
+      ]
+    ],
+    "resposta": "O trancamento de disciplina possui um prazo limite no início do semestre. Ao solicitar, você perde a vaga na disciplina e não precisa mais cursá-la. Você não é reprovado nem fica como desistente, pois a disciplina é apenas retirada da sua matrícula.",
+    "passou": true,
+    "motivo": "ok",
+    "segundos": 14.3,
+    "tentativas": 3
+  },
+  {
+    "id": "trancamento-total",
+    "categoria": "Trancamento e abandono",
+    "tipo": "resposta",
+    "pergunta": "O que é o trancamento total de matrícula?",
+    "esperado": "Trancamento total concedido por requerimento, até 3 semestres sucessivos ou não (Regimento, art. 101).",
+    "fatos": [
+      [
+        "tres semestres",
+        "3 semestres"
+      ]
+    ],
+    "resposta": "O trancamento total de matrícula é o pedido do aluno para não cursar disciplinas durante um ou mais semestres, sem que isso seja considerado abandono. O trancamento pode ser concedido por até três semestres, sucessivos ou não. Caso seja concedido, a universidade assegura a vaga do aluno, que permanece como aluno regular. O trancamento não abre novas vagas no curso.",
+    "passou": true,
+    "motivo": "ok",
+    "segundos": 1.7,
+    "tentativas": 1
+  },
+  {
+    "id": "abandono-disc",
+    "categoria": "Trancamento e abandono",
+    "tipo": "resposta",
+    "pergunta": "Quando uma disciplina é considerada abandonada?",
+    "esperado": "Vale o regimento: abandono = não realizar nenhum dos trabalhos escolares; aprovação exige média 7,0 e 75% de frequência.",
+    "fatos": [
+      [
+        "trabalhos escolares",
+        "75%",
+        "frequencia"
+      ]
+    ],
+    "resposta": "Uma disciplina é considerada abandonada quando o estudante não realiza nenhum dos trabalhos escolares previstos.",
+    "passou": true,
+    "motivo": "ok",
+    "segundos": 1.4,
+    "tentativas": 1
+  },
+  {
+    "id": "jubilamento",
+    "categoria": "Trancamento e abandono",
+    "tipo": "resposta",
+    "pergunta": "O que acontece se eu ficar três semestres seguidos sem me matricular?",
+    "esperado": "Matrícula cancelada ao interromper o curso por 3 semestres consecutivos ou 4 não consecutivos (Regimento, art. 103, IV); só volta por novo processo seletivo.",
+    "fatos": [
+      [
+        "cancelad",
+        "cancelamento"
+      ]
+    ],
+    "resposta": "Se você não se matricular por três semestres seguidos, você entra em situação de abandono. Isso resulta no jubilamento, que é o cancelamento da sua matrícula no curso.",
+    "passou": true,
+    "motivo": "ok",
+    "segundos": 1.2,
+    "tentativas": 1
+  },
+  {
+    "id": "cra-craa",
+    "categoria": "Notas",
+    "tipo": "resposta",
+    "pergunta": "Qual a diferença entre CRA e CRAA?",
+    "esperado": "CRA: desempenho em cada período letivo; CRAA: em todos os períodos desde o ingresso.",
+    "fatos": [
+      [
+        "periodo",
+        "semestre"
+      ],
+      [
+        "todos os periodos",
+        "todo o curso",
+        "todas as disciplinas",
+        "desde o ingresso"
+      ]
+    ],
+    "resposta": "O CRA representa o acúmulo das notas obtidas pelo aluno em um único semestre. O CRAA é a média ponderada das notas de todas as disciplinas cursadas desde o ingresso no curso. Enquanto o CRA é calculado ao final de cada período letivo, o CRAA reflete o desempenho acumulado durante toda a graduação.",
+    "passou": true,
+    "motivo": "ok",
+    "segundos": 1.6,
+    "tentativas": 1
+  },
+  {
+    "id": "segunda-chamada",
+    "categoria": "Notas",
+    "tipo": "resposta",
+    "pergunta": "Como peço segunda chamada de uma prova?",
+    "esperado": "Por meio de processo SEI (vale o FAQ; o regimento antigo fala em requerimento ao Departamento em 3 dias úteis e está desatualizado).",
+    "fatos": [
+      [
+        "processo sei",
+        "sei"
+      ],
+      [
+        "processo"
+      ]
+    ],
+    "resposta": "A segunda chamada deve ser solicitada por meio de um Processo SEI. O pedido deve ser feito ao Departamento da disciplina em até três dias úteis após o fim do impedimento que justificou a ausência.",
+    "passou": true,
+    "motivo": "ok",
+    "segundos": 1.5,
+    "tentativas": 1
+  },
+  {
+    "id": "prova-final",
+    "categoria": "Notas",
+    "tipo": "resposta",
+    "pergunta": "Como é calculada a média final quando faço prova final?",
+    "esperado": "MF = [(MP x 6) + (EF x 4)] / 10.",
+    "fatos": [
+      [
+        "mpx6",
+        "mp x 6",
+        "media parcial x 6",
+        "por seis",
+        "por 6"
+      ],
+      [
+        "efx4",
+        "ef x 4",
+        "prova x 4",
+        "por quatro",
+        "por 4"
+      ]
+    ],
+    "resposta": "A média final é calculada pela fórmula: ((média parcial x 6) + (nota da prova x 4)) / 10.",
+    "passou": true,
+    "motivo": "ok",
+    "segundos": 1.8,
+    "tentativas": 1
+  },
+  {
+    "id": "fora-reitor",
+    "categoria": "Fora do escopo",
+    "tipo": "recusa",
+    "pergunta": "Qual é o telefone pessoal do reitor da UESC?",
+    "esperado": "Deve recusar (informação inexistente nos documentos).",
+    "resposta": "Desculpe, não encontrei essa informação nos documentos oficiais do sistema. Recomendo procurar a diretoria do CACIC.",
+    "passou": true,
+    "motivo": "ok",
+    "segundos": 1.3,
+    "tentativas": 1
+  },
+  {
+    "id": "fora-geral",
+    "categoria": "Fora do escopo",
+    "tipo": "recusa",
+    "pergunta": "Qual é a capital da França?",
+    "esperado": "Deve recusar (fora do escopo acadêmico).",
+    "resposta": "Desculpe, não encontrei essa informação nos documentos oficiais do sistema. Recomendo procurar a diretoria do CACIC.",
+    "passou": true,
+    "motivo": "ok",
+    "segundos": 1.6,
+    "tentativas": 1
+  },
+  {
+    "id": "fora-ru",
+    "categoria": "Fora do escopo",
+    "tipo": "recusa",
+    "pergunta": "Qual é o cardápio do restaurante universitário hoje?",
+    "esperado": "Deve recusar (informação inexistente nos documentos).",
+    "resposta": "Desculpe, não encontrei essa informação nos documentos oficiais do sistema. Recomendo procurar a diretoria do CACIC.",
+    "passou": true,
+    "motivo": "ok",
+    "segundos": 2.0,
+    "tentativas": 1
+  },
+  {
+    "id": "fu-hc-2012",
+    "categoria": "Horas complementares",
+    "tipo": "resposta",
+    "conversa": [
+      "Estou na matriz 2023. Quantas horas complementares preciso para me formar?"
+    ],
+    "pergunta": "E para quem está na matriz 2012?",
+    "esperado": "200 horas complementares (matriz 2012).",
+    "fatos": [
+      [
+        "200"
+      ]
+    ],
+    "resposta": "Para quem está na matriz 2012, são necessárias 200 horas complementares para a integralização do curso.",
+    "passou": true,
+    "motivo": "ok",
+    "segundos": 2.6,
+    "tentativas": 1
+  },
+  {
+    "id": "fu-he-2023",
+    "categoria": "Horas complementares",
+    "tipo": "resposta",
+    "conversa": [
+      "Estou na matriz 2023. Quantas horas complementares preciso para me formar?"
+    ],
+    "pergunta": "E quantas horas de extensão eu preciso?",
+    "esperado": "80 horas de extensão (matriz 2023).",
+    "fatos": [
+      [
+        "80"
+      ]
+    ],
+    "resposta": "Para a matriz 2023, você precisa cumprir 80 horas de ações de extensão.",
+    "passou": true,
+    "motivo": "ok",
+    "segundos": 2.6,
+    "tentativas": 1
+  },
+  {
+    "id": "fu-trancamento-limite",
+    "categoria": "Trancamento e abandono",
+    "tipo": "resposta",
+    "conversa": [
+      "O que é o trancamento total de matrícula?"
+    ],
+    "pergunta": "Quantos semestres eu posso trancar, no total?",
+    "esperado": "Até 3 semestres, sucessivos ou não (Regimento, art. 101).",
+    "fatos": [
+      [
+        "tres semestres",
+        "3 semestres"
+      ]
+    ],
+    "resposta": "Você pode trancar a matrícula por até três semestres, sucessivos ou não.",
+    "passou": true,
+    "motivo": "ok",
+    "segundos": 2.4,
+    "tentativas": 1
+  },
+  {
+    "id": "fu-abandono-frequencia",
+    "categoria": "Trancamento e abandono",
+    "tipo": "resposta",
+    "conversa": [
+      "Quando uma disciplina é considerada abandonada?"
+    ],
+    "pergunta": "E qual é a frequência mínima pra não reprovar?",
+    "esperado": "75% de frequência (Regimento).",
+    "fatos": [
+      [
+        "75%",
+        "75"
+      ]
+    ],
+    "resposta": "A frequência mínima exigida é de 75% da carga horária da disciplina. Não há abono de faltas.",
+    "passou": true,
+    "motivo": "ok",
+    "segundos": 2.1,
+    "tentativas": 1
+  },
+  {
+    "id": "fu-estagio-disciplina",
+    "categoria": "Estágio e TCC",
+    "tipo": "resposta",
+    "conversa": [
+      "O TCC e o estágio são a mesma coisa?"
+    ],
+    "pergunta": "Então em qual disciplina isso está incluído?",
+    "esperado": "Disciplina de Estágio Supervisionado.",
+    "fatos": [
+      [
+        "estagio supervisionado",
+        "disciplina de estagio"
+      ]
+    ],
+    "resposta": "Não consegui gerar a resposta agora. Tente novamente em instantes.",
+    "passou": false,
+    "motivo": "erro do servidor",
+    "segundos": 14.5,
+    "tentativas": 3
+  },
+  {
+    "id": "fu-segunda-chamada-sistema",
+    "categoria": "Notas",
+    "tipo": "resposta",
+    "conversa": [
+      "Como peço segunda chamada de uma prova?"
+    ],
+    "pergunta": "E isso é feito por qual sistema?",
+    "esperado": "Processo SEI (FAQ).",
+    "fatos": [
+      [
+        "processo sei",
+        "sei"
+      ]
+    ],
+    "resposta": "O pedido de segunda chamada é realizado por meio do sistema SEI.",
+    "passou": true,
+    "motivo": "ok",
+    "segundos": 8.6,
+    "tentativas": 1
+  },
+  {
+    "id": "fu-mf-desligamento",
+    "categoria": "Mais Futuro",
+    "tipo": "resposta",
+    "conversa": [
+      "Quem pode receber o Mais Futuro?"
+    ],
+    "pergunta": "E em que situação eu perderia esse auxílio?",
+    "esperado": "Ao atingir 66,66% do curso, trancar mais de 4 disciplinas ou reprovar em mais de 4.",
+    "fatos": [
+      [
+        "66,66",
+        "66.66",
+        "66%"
+      ],
+      [
+        "4 disciplinas",
+        "quatro disciplinas"
+      ]
+    ],
+    "resposta": "Você será desligado do auxílio Mais Futuro se alcançar 66,66% de conclusão do curso, trancar mais de 4 disciplinas ou reprovar em mais de 4 disciplinas. O benefício também pode ser suspenso caso você não confirme o interesse em continuar no programa quando solicitado pela SEC. Além disso, o descumprimento de critérios de matrícula ou de integralização curricular, a recusa em assumir vagas de estágio ou projetos vinculados, e a solicitação expressa do estudante também levam ao desligamento.",
+    "passou": true,
+    "motivo": "ok",
+    "segundos": 2.5,
+    "tentativas": 1
+  },
+  {
+    "id": "fu-fora-escopo-ru",
+    "categoria": "Fora do escopo",
+    "tipo": "recusa",
+    "conversa": [
+      "Quem pode receber o Mais Futuro?"
+    ],
+    "pergunta": "E qual é o cardápio do restaurante universitário hoje?",
+    "esperado": "Deve recusar (informação inexistente nos documentos; não tem relação com o Mais Futuro).",
+    "resposta": "Desculpe, não encontrei essa informação nos documentos oficiais do sistema. Recomendo procurar a diretoria do CACIC.",
+    "passou": true,
+    "motivo": "ok",
+    "segundos": 2.2,
+    "tentativas": 1
+  }
+]

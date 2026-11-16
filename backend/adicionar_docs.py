@@ -22,6 +22,7 @@ from langchain_text_splitters import RecursiveCharacterTextSplitter
 from qdrant_client import QdrantClient, models
 
 from curados import secoes_markdown
+from regulamentos import DOCUMENTOS_POR_ARTIGO, secoes_por_artigo
 
 load_dotenv()
 QDRANT_URL = os.getenv("QDRANT_URL", "http://localhost:6333")
@@ -54,6 +55,11 @@ def carregar(caminho: str, fonte: str, chunker: RecursiveCharacterTextSplitter) 
     import pymupdf4llm
 
     texto = pymupdf4llm.to_markdown(caminho)
+    if os.path.basename(caminho) in DOCUMENTOS_POR_ARTIGO:
+        # Resolução/edital/regimento: divide por artigo/seção antes do chunker (ver
+        # regulamentos.py) — mesma ideia do `.md` curado acima, aplicada aos PDFs regulatórios.
+        secoes = [Document(page_content=s, metadata={"fonte": fonte}) for s in secoes_por_artigo(texto)]
+        return chunker.split_documents(secoes)
     return chunker.split_documents([Document(page_content=texto, metadata={"fonte": fonte})])
 
 

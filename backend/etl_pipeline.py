@@ -9,6 +9,8 @@ from langchain_qdrant import QdrantVectorStore
 from qdrant_client import QdrantClient
 from qdrant_client.models import Distance, VectorParams
 
+from regulamentos import DOCUMENTOS_POR_ARTIGO, secoes_por_artigo
+
 load_dotenv()
 QDRANT_URL = os.getenv("QDRANT_URL", "http://localhost:6333")
 COLLECTION_NAME = "cacic_docs"
@@ -23,7 +25,14 @@ async def executar_pipeline_etl():
         try:
             # Esta única linha faz todo o trabalho de visão computacional offline
             texto_markdown = pymupdf4llm.to_markdown(arquivo)
-            documentos_brutos.append(Document(page_content=texto_markdown, metadata={"fonte": arquivo}))
+            if os.path.basename(arquivo) in DOCUMENTOS_POR_ARTIGO:
+                # Resolução/edital/regimento: divide por artigo/seção antes do chunker, pra
+                # um trecho procedural não ficar diluído dentro de um parágrafo sobre outro
+                # assunto (ver docs/DECISOES.md).
+                for secao in secoes_por_artigo(texto_markdown):
+                    documentos_brutos.append(Document(page_content=secao, metadata={"fonte": arquivo}))
+            else:
+                documentos_brutos.append(Document(page_content=texto_markdown, metadata={"fonte": arquivo}))
         except Exception as e:
             print(f"      [ERRO] Falha ao processar {arquivo}: {e}")
             

@@ -80,6 +80,7 @@ cacic_assistant_v2/
 │   ├── etl_pipeline.py       # carga inicial: PDFs -> Markdown -> chunks -> Qdrant (recria a coleção)
 │   ├── adicionar_docs.py     # adiciona/remove documentos sem recriar a coleção (PDF ou .md curado)
 │   ├── curados.py            # divide documentos curados em seções (lógica pura)
+│   ├── regulamentos.py       # divide resoluções/editais por artigo/seção antes do chunking (pura)
 │   ├── pytest.ini
 │   ├── ruff.toml
 │   ├── api/
@@ -290,7 +291,7 @@ Também há `GET /health`, que responde `{"status": "ok"}`.
 
 - **503 do Gemini (mitigado):** a API pode responder `503 UNAVAILABLE` em momentos de alta demanda. Antes do primeiro token, o backend falha rápido e troca para o `GEMINI_FALLBACK_MODEL`, sem o aluno perceber. Se a troca acontecer depois de tokens já enviados, a rota emite um evento SSE `reset` e o frontend descarta o texto parcial antes de mostrar a resposta da reserva. Se tudo falhar, o frontend mostra uma mensagem amigável com o botão "Tentar novamente" (que reenvia a última pergunta; o histórico salvo no servidor pode manter a pergunta repetida, o que não afeta a resposta).
 - Documentos oficiais mais antigos podem contradizer práticas atuais; a base só reflete o que está indexado, e o FAQ é a referência para procedimentos recentes.
-- A busca é apenas semântica (densa), e a pontuação de similaridade entre trechos relevantes e irrelevantes é próxima, o que pede um reranker em perguntas mais difíceis.
+- A busca é apenas semântica (densa), e a pontuação de similaridade entre trechos relevantes e irrelevantes é próxima, o que pede um reranker em perguntas mais difíceis. Busca híbrida (BM25 + densa) foi testada e revertida: piorou a avaliação sem corrigir os casos-alvo, porque a pergunta do aluno costuma não repetir o vocabulário do trecho certo (ex.: pergunta diz "documento", resposta diz "laudo médico") — o mesmo descompasso que o BM25 também não resolve.
 - O conjunto de avaliação é pequeno e foi derivado do FAQ (ver a seção de Avaliação).
 - Em pelo menos um caso de acompanhamento (`fu-estagio-disciplina`), a busca encontrou o trecho certo em 1º lugar e ainda assim o modelo recusou: um problema de prompt/geração de resposta, não de recuperação.
 
@@ -298,8 +299,8 @@ Também há `GET /health`, que responde `{"status": "ok"}`.
 
 - Segundo conjunto de avaliação, com perguntas novas de alunos que não estejam no FAQ.
 - Pool de conexões e grafo compilados uma única vez no `lifespan` do FastAPI.
-- Reranker e busca híbrida (semântica + palavras-chave), medidos pela avaliação.
-- Divisão dos trechos respeitando artigos e listas, e metadados de página dos PDFs.
+- Reranker ou expansão de consulta (HyDE/multi-query), para o descompasso de vocabulário entre pergunta e resposta que a divisão por artigo não resolve.
+- Metadados de página dos PDFs nas respostas (fonte + página).
 - Exibir as fontes (documento e página) nas respostas.
 - Integrar ou consolidar os módulos de `data_pipeline/` (chunking semântico, reranker).
 
