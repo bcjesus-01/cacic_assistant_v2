@@ -43,3 +43,4 @@ backend/eval/resultados-*.json
 /CLAUDE.md
 /docs/DECISOES.md
 /docs/ROADMAP.md
+/.claude/
