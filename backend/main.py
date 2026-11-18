@@ -1,20 +1,43 @@
 import logging
 import os
+from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from langgraph.checkpoint.postgres.aio import AsyncPostgresSaver
+from psycopg_pool import AsyncConnectionPool
 
+from agent.graph import DB_URI, workflow
 from api.routes import router
 
 logging.basicConfig(
     level=os.getenv("LOG_LEVEL", "INFO").upper(),
     format="%(asctime)s %(levelname)s %(name)s: %(message)s",
 )
+logger = logging.getLogger(__name__)
+
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    # Pool e grafo compilados uma vez só, na subida — antes, cada mensagem recriava os dois
+    # (até 10 conexões novas por pergunta). Fica em app.state pra api/routes.py reaproveitar.
+    logger.info("Conectando ao Postgres e compilando o grafo...")
+    async with AsyncConnectionPool(
+        conninfo=DB_URI, max_size=10, kwargs={"autocommit": True}
+    ) as pool:
+        checkpointer = AsyncPostgresSaver(pool)
+        await checkpointer.setup()
+        app.state.app_grafo = workflow.compile(checkpointer=checkpointer)
+        logger.info("Pronto.")
+        yield
+    logger.info("Pool do Postgres encerrado.")
+
 
 app = FastAPI(
     title="CACIC Assistant API",
     description="Backend de Inteligência Artificial para o Centro Acadêmico",
     version="2.0.0",
+    lifespan=lifespan,
 )
 
 # Origens permitidas, separadas por vírgula. Em produção, defina CORS_ORIGINS com o domínio do frontend.
