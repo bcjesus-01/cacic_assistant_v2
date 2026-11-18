@@ -77,7 +77,10 @@ def perguntar(api: str, thread_id: str, pergunta: str, timeout: int) -> tuple[st
                     valor = dado
                 if evento == "error":
                     erro = True
-                partes.append(valor)
+                # Eventos nomeados que não são texto da resposta (ex.: "fontes", uma lista)
+                # não entram na resposta acumulada — só os tokens de texto normais.
+                if isinstance(valor, str):
+                    partes.append(valor)
             elif linha == "":
                 evento = None
     return "".join(partes), erro

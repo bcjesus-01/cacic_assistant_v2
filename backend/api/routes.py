@@ -9,10 +9,12 @@ from langgraph.checkpoint.postgres.aio import AsyncPostgresSaver
 from psycopg_pool import AsyncConnectionPool
 
 from agent.graph import DB_URI, workflow
+from agent.prompts import RECUSA_PADRAO
 from agent.reescrita import TAG_CHAMADA_INTERNA
-from api.schemas import ChatRequest
+from api.schemas import ChatRequest, FeedbackRequest
 from api.controle_stream import ControleStream
 from api.sse import DONE, MENSAGEM_ERRO, MENSAGEM_LIMITE, RESET, extrair_texto, sse
+from registro import registrar_recusa, salvar_feedback
 
 logger = logging.getLogger(__name__)
 router = APIRouter()
@@ -73,6 +75,17 @@ async def chat_stream(request: ChatRequest):
                         yield sse(token)
                         await asyncio.sleep(0)  # cede o loop sem atrasar o stream
 
+                # Lê a mensagem final do grafo pra pegar metadados que não vêm no stream de
+                # tokens: fontes usadas (agent.graph.rag_academico) e se foi uma recusa.
+                estado_final = await app_grafo.aget_state(config)
+                ultima_mensagem = estado_final.values["messages"][-1]
+                texto_final = extrair_texto(getattr(ultima_mensagem, "content", ""))
+                fontes = getattr(ultima_mensagem, "additional_kwargs", {}).get("fontes") or []
+                if fontes:
+                    yield sse(fontes, event="fontes")
+                if texto_final.strip() == RECUSA_PADRAO:
+                    await registrar_recusa(request.thread_id, request.message)
+
                 yield DONE
 
         except Exception:
@@ -94,3 +107,9 @@ async def chat_stream(request: ChatRequest):
             "X-Accel-Buffering": "no",
         },
     )
+
+
+@router.post("/feedback")
+async def feedback(request: FeedbackRequest):
+    await salvar_feedback(request.thread_id, request.pergunta, request.resposta, request.util)
+    return {"status": "ok"}

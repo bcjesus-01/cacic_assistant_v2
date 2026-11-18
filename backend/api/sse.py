@@ -24,7 +24,8 @@ def extrair_texto(content) -> str:
     return ""
 
 
-def sse(payload: str, event: str | None = None) -> str:
-    # json.dumps escapa quebras de linha, aspas e unicode com segurança
+def sse(payload: str | list[str], event: str | None = None) -> str:
+    # json.dumps escapa quebras de linha, aspas e unicode com segurança (e serializa listas
+    # como array JSON, usado pelo evento "fontes").
     prefixo = f"event: {event}\n" if event else ""
     return f"{prefixo}data: {json.dumps(payload, ensure_ascii=False)}\n\n"

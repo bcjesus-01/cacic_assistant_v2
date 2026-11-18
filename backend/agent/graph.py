@@ -12,11 +12,12 @@ from langchain_huggingface import HuggingFaceEmbeddings
 
 from agent.contexto import montar_contexto, nome_fonte, selecionar
 from agent.llm import instanciar_gemini
-from agent.prompts import prompt_rag_academico
+from agent.prompts import RECUSA_PADRAO, prompt_rag_academico
 from agent.reescrita import (
     INSTRUCAO_REESCRITA,
     TAG_CHAMADA_INTERNA,
     deve_reescrever,
+    extrair_texto,
     limpar_reescrita,
     montar_historico_textual,
 )
@@ -123,6 +124,12 @@ async def rag_academico(state: AgentState, config: RunnableConfig) -> dict:
     resposta = await cadeia_rag.ainvoke(
         {"messages": mensagens, "contexto": contexto}, config=config
     )
+    # Fontes realmente usadas nesta resposta, pro frontend exibir (ver api/routes.py). Não
+    # faz sentido mostrar fontes numa recusa — os trechos recuperados não respondem a pergunta.
+    if extrair_texto(resposta.content).strip() != RECUSA_PADRAO:
+        resposta.additional_kwargs["fontes"] = sorted(
+            {nome_fonte(d.metadata) for d in documentos}
+        )
     return {"messages": [resposta]}
 
 

@@ -25,11 +25,12 @@ def deve_reescrever(mensagens: list) -> bool:
     return len(mensagens) > 1
 
 
-def _texto(conteudo) -> str:
+def extrair_texto(conteudo) -> str:
     """Extrai texto simples de `conteudo` (string ou blocos do langchain-google-genai).
 
     Pequena duplicata de api.sse.extrair_texto: este módulo é puro e não importa de `api/`
     para não inverter a direção de dependência atual (api depende de agent, não o contrário).
+    Reaproveitado por outros módulos de `agent/` (ex.: `graph.py`), onde essa direção não se aplica.
     """
     if isinstance(conteudo, str):
         return conteudo
@@ -48,7 +49,7 @@ def montar_historico_textual(mensagens: list) -> str:
     """Mensagens antes da última, como 'Aluno: ...' / 'Assistente: ...', uma por linha."""
     linhas = []
     for m in mensagens[:-1]:
-        texto = _texto(m.content).strip()
+        texto = extrair_texto(m.content).strip()
         if texto:
             rotulo = _ROTULO_TIPO.get(m.type, m.type)
             linhas.append(f"{rotulo}: {texto}")
@@ -57,7 +58,7 @@ def montar_historico_textual(mensagens: list) -> str:
 
 def limpar_reescrita(conteudo, pergunta_original: str) -> str:
     """Limpa a saída do modelo; cai para a pergunta original se vier vazia ou suspeita."""
-    texto = _texto(conteudo).strip().strip('"').strip("'").strip()
+    texto = extrair_texto(conteudo).strip().strip('"').strip("'").strip()
     if not texto or len(texto) > LIMITE_SAIDA_RAZOAVEL:
         return pergunta_original
     return texto
