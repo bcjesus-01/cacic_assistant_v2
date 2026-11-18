@@ -1,26 +1,57 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --page: #f3f4f6;
+  --surface: #ffffff;
+  --surface-sunken: #eef0f3;
+  --border: #dde0e6;
+  --ink: #1b2030;
+  --ink-muted: #5a6072;
+  --ink-faint: #8d93a1;
+  --primary: #2a3356;
+  --primary-ink: #eef0f8;
+  --accent-soft: #e6e9f3;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --page: #10121a;
+    --surface: #171a24;
+    --surface-sunken: #1d212c;
+    --border: #2b2f3c;
+    --ink: #e7e9f0;
+    --ink-muted: #a3a8b8;
+    --ink-faint: #717689;
+    --primary: #46538c;
+    --primary-ink: #eef0f8;
+    --accent-soft: #242b47;
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+@theme inline {
+  --color-page: var(--page);
+  --color-surface: var(--surface);
+  --color-surface-sunken: var(--surface-sunken);
+  --color-border: var(--border);
+  --color-ink: var(--ink);
+  --color-ink-muted: var(--ink-muted);
+  --color-ink-faint: var(--ink-faint);
+  --color-primary: var(--primary);
+  --color-primary-ink: var(--primary-ink);
+  --color-accent-soft: var(--accent-soft);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
 }
+
+body {
+  background: var(--page);
+  color: var(--ink);
+  font-family: var(--font-sans), system-ui, -apple-system, sans-serif;
+}
+
+/* Espaçamento compacto pras listas com hífen do markdown (padrão do navegador destoaria
+   das bolhas do chat). */
+.resposta-markdown p { margin: 0 0 0.5em; }
+.resposta-markdown p:last-child { margin-bottom: 0; }
+.resposta-markdown ul, .resposta-markdown ol { margin: 0.25em 0 0.5em; padding-left: 1.3em; }
+.resposta-markdown li { margin-bottom: 0.2em; }
