@@ -1,8 +1,9 @@
-.venv
+.venv/
 __pycache__/
 *.pyc
 .env
-.ruff_cache/
-.pytest_cache/
-# PDFs de origem da ingestão: não entram na imagem
 data/
+eval/historico/
+eval/resultados-*.json
+.pytest_cache/
+.ruff_cache/

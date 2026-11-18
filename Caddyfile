@@ -1,0 +1,16 @@
+# Sem domínio ainda: ":80" serve HTTP puro no IP da VM (o Caddy só tenta provisionar HTTPS
+# automático quando o endereço do site é um nome de domínio, não um IP — então isso funciona
+# sem erro mesmo assim).
+#
+# Quando houver um domínio: troque ":80" por ele (ex.: "cacic.seudominio.com"), aponte o
+# registro DNS A pro IP da VM, e reinicie o Caddy (docker compose -f docker-compose.prod.yml
+# restart caddy). O Caddy provisiona o certificado Let's Encrypt automaticamente — nada mais
+# muda neste arquivo.
+:80 {
+	handle /api/* {
+		reverse_proxy backend:8000
+	}
+	handle {
+		reverse_proxy frontend:3000
+	}
+}
