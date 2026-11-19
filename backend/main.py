@@ -7,7 +7,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from langgraph.checkpoint.postgres.aio import AsyncPostgresSaver
 from psycopg_pool import AsyncConnectionPool
 
-from agent.graph import DB_URI, workflow
+from agent.graph import DB_URI, construir_grafo
 from api.routes import router
 
 logging.basicConfig(
@@ -19,8 +19,11 @@ logger = logging.getLogger(__name__)
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    # Pool e grafo compilados uma vez só, na subida — antes, cada mensagem recriava os dois
-    # (até 10 conexões novas por pergunta). Fica em app.state pra api/routes.py reaproveitar.
+    # Modelo (bge-m3), Qdrant, pool do Postgres e grafo — tudo montado uma vez só, na subida,
+    # não na importação do módulo nem por requisição. Fica em app.state pra api/routes.py
+    # reaproveitar.
+    logger.info("Carregando modelo (bge-m3) e conectando ao Qdrant...")
+    workflow = construir_grafo()
     logger.info("Conectando ao Postgres e compilando o grafo...")
     async with AsyncConnectionPool(
         conninfo=DB_URI, max_size=10, kwargs={"autocommit": True}
