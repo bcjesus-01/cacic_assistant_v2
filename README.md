@@ -12,6 +12,8 @@ Chatbot baseado em **RAG (Retrieval-Augmented Generation)** que responde dúvida
 - Memória de conversa por sessão, persistida em PostgreSQL (`AsyncPostgresSaver`).
 - Streaming de respostas com SSE (FastAPI) e consumo com `fetch` + `ReadableStream` (Next.js).
 - Conjunto de avaliação com perguntas reais dos alunos e script que mede a taxa de acerto.
+- Feedback útil/não útil por resposta e registro de perguntas sem resposta, para decisões sobre o FAQ virem de dados reais.
+- Limites de uso (por conversa, por IP e teto diário) para proteger a cota grátis do Gemini.
 - Toda a solução containerizada com Docker Compose.
 
 ## Arquitetura
@@ -70,35 +72,48 @@ flowchart LR
 ```text
 cacic_assistant_v2/
 ├── docker-compose.yml
+├── docker-compose.prod.yml   # produção: usa os Dockerfiles multi-stage + Caddy, sem bind mount de código
+├── Caddyfile                 # proxy reverso de produção: /api/* -> backend, resto -> frontend (mesmo host)
 ├── .env.example
 ├── .github/workflows/ci.yml  # CI: lint (Ruff), testes (pytest) e checagem de sintaxe
 ├── docs/
-│   └── FAQ_CACIC.md          # FAQ curado: um par pergunta/resposta por seção
+│   ├── FAQ_CACIC.md          # FAQ curado: um par pergunta/resposta por seção
+│   └── DEPLOY.md             # roteiro de deploy (Oracle Linux/ARM64)
+├── design/                   # sistema de design do frontend: tokens, componentes e previews HTML
 ├── backend/
 │   ├── Dockerfile
-│   ├── main.py               # FastAPI, CORS e /health
+│   ├── main.py               # FastAPI, CORS, /health e o lifespan (modelo, Qdrant, pool, grafo)
 │   ├── etl_pipeline.py       # carga inicial: PDFs -> Markdown -> chunks -> Qdrant (recria a coleção)
 │   ├── adicionar_docs.py     # adiciona/remove documentos sem recriar a coleção (PDF ou .md curado)
 │   ├── curados.py            # divide documentos curados em seções (lógica pura)
 │   ├── regulamentos.py       # divide resoluções/editais por artigo/seção antes do chunking (pura)
+│   ├── versionamento.py      # hash + manifesto dos documentos indexados (lógica pura)
+│   ├── verificar_documentos.py  # relatório só leitura: documentos novos, que mudaram ou foram removidos
+│   ├── registro.py           # feedback e perguntas sem resposta, em Postgres (tolerante a falha)
+│   ├── limites.py            # limite por IP e teto diário, em Postgres (tolerante a falha)
 │   ├── pytest.ini
 │   ├── ruff.toml
 │   ├── api/
-│   │   ├── routes.py         # POST /chat/stream (gerador SSE)
-│   │   ├── schemas.py        # validação do request (ChatRequest)
-│   │   └── sse.py            # formatação dos eventos SSE
+│   │   ├── routes.py         # POST /chat/stream (gerador SSE) e POST /feedback
+│   │   ├── schemas.py        # validação do request (ChatRequest, FeedbackRequest)
+│   │   ├── sse.py            # formatação dos eventos SSE
+│   │   ├── controle_stream.py # decide quando acionar o modelo de reserva (lógica pura)
+│   │   └── ip_cliente.py     # extrai o IP do cliente a partir dos headers (lógica pura)
 │   ├── agent/
-│   │   ├── graph.py          # StateGraph: roteador, RAG, conversa geral
+│   │   ├── graph.py          # construir_grafo(): roteador, RAG, conversa geral (fábrica, chamada no lifespan)
 │   │   ├── roteamento.py     # regra de roteamento (pura, testável)
 │   │   ├── contexto.py       # seleção, deduplicação e rotulagem dos trechos (pura, testável)
-│   │   ├── llm.py            # instância do Gemini
+│   │   ├── reescrita.py      # reescreve a pergunta de acompanhamento para a busca (pura, testável)
+│   │   ├── llm.py            # instância do Gemini (principal e reserva)
 │   │   └── prompts.py        # prompt do RAG
 │   ├── eval/
-│   │   ├── perguntas.json    # perguntas dos alunos, resposta esperada e fatos que devem aparecer
-│   │   ├── avaliar.py        # roda as perguntas no backend e calcula a taxa de acerto
-│   │   ├── diagnosticar.py   # mostra os trechos que a busca devolve para uma pergunta
-│   │   └── historico/        # resultados guardados como evidência (linha de base e final)
-│   └── tests/                # roteamento, SSE, validação, contexto e documentos curados
+│   │   ├── perguntas.json         # perguntas de desenvolvimento, resposta esperada e fatos que devem aparecer
+│   │   ├── perguntas_heldout.json # conjunto separado, nunca usado para ajustar prompt/busca/FAQ
+│   │   ├── avaliar.py             # roda as perguntas no backend e calcula a taxa de acerto (--rodadas N)
+│   │   ├── classificar_erros.py   # classifica falhas do held-out em busca, resposta ou documento
+│   │   ├── diagnosticar.py        # mostra os trechos que a busca devolve para uma pergunta
+│   │   └── historico/             # resultados guardados como evidência (linha de base e final)
+│   └── tests/                # roteamento, SSE, validação, contexto, reescrita, limites e documentos curados
 ├── data_pipeline/            # módulos em evolução (chunking semântico, reranking)
 │   ├── pyproject.toml
 │   ├── uv.lock
@@ -112,6 +127,8 @@ cacic_assistant_v2/
 └── frontend/
     └── app/
         ├── layout.tsx
+        ├── tokens.css         # tokens de design (cor, tipografia, espaçamento)
+        ├── cacic.css          # componentes visuais do design system
         └── page.tsx          # interface de chat e parser SSE
 ```
 
@@ -300,11 +317,9 @@ Também há `GET /health`, que responde `{"status": "ok"}`.
 
 ## Próximos passos
 
-- Segundo conjunto de avaliação, com perguntas novas de alunos que não estejam no FAQ.
-- Pool de conexões e grafo compilados uma única vez no `lifespan` do FastAPI.
-- Reranker ou expansão de consulta (HyDE/multi-query), para o descompasso de vocabulário entre pergunta e resposta que a divisão por artigo não resolve.
-- Metadados de página dos PDFs nas respostas (fonte + página).
-- Exibir as fontes (documento e página) nas respostas.
+- Reranker ou expansão de consulta (HyDE/multi-query), para o descompasso de vocabulário entre pergunta e resposta que a divisão por artigo não resolveu — uma primeira tentativa de busca híbrida (BM25 + densa) piorou a avaliação sem corrigir os casos-alvo (ver "Limitações conhecidas").
+- Número da página do PDF junto da fonte nas respostas (hoje só o nome do documento).
+- Deploy em produção: `docker-compose.prod.yml` e `Caddyfile` já preparados; falta disponibilidade de VM.
 - Integrar ou consolidar os módulos de `data_pipeline/` (chunking semântico, reranker).
 
 ## Autor
