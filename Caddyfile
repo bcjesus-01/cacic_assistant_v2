@@ -1,12 +1,8 @@
-# Sem domínio ainda: ":80" serve HTTP puro no IP da VM (o Caddy só tenta provisionar HTTPS
-# automático quando o endereço do site é um nome de domínio, não um IP — então isso funciona
-# sem erro mesmo assim).
-#
-# Quando houver um domínio: troque ":80" por ele (ex.: "cacic.seudominio.com"), aponte o
-# registro DNS A pro IP da VM, e reinicie o Caddy (docker compose -f docker-compose.prod.yml
-# restart caddy). O Caddy provisiona o certificado Let's Encrypt automaticamente — nada mais
-# muda neste arquivo.
-:80 {
+# Domínio: assistentecacic.me (registrado via GitHub Student Pack / Namecheap, 2026-11-19).
+# O Caddy provisiona e renova o certificado Let's Encrypt automaticamente (HTTP-01 na porta 80)
+# só por usar um nome de domínio aqui em vez de ":80" — nada mais precisa ser configurado.
+# HTTP continua ativo só pro desafio ACME e pra redirecionar pra HTTPS (comportamento padrão).
+assistentecacic.me {
 	handle /api/* {
 		reverse_proxy backend:8000
 	}
