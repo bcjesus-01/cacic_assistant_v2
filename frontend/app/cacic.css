@@ -147,13 +147,14 @@ button, textarea { font-family: inherit; }
   position: relative; z-index: 1;
   width: 100%; max-width: 808px; margin: 0 auto;
   padding: var(--space-6) var(--space-6) var(--space-5);
+  text-align: center;
 }
 .cacic-hero__title {
   margin: var(--space-4) 0 0;
   font-size: 56px; line-height: 56px; font-weight: 800;
   letter-spacing: -0.01em; text-transform: uppercase; color: var(--ink);
 }
-.cacic-hero__lead { margin: var(--space-4) 0 0; max-width: 520px; color: var(--ink-muted); font-size: 16px; line-height: 26px; }
+.cacic-hero__lead { margin: var(--space-4) auto 0; max-width: 520px; color: var(--ink-muted); font-size: 16px; line-height: 26px; }
 
 .cacic-topics {
   display: grid; grid-template-columns: repeat(2, minmax(0, 1fr));
