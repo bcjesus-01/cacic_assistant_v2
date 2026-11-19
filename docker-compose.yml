@@ -12,7 +12,7 @@ services:
       - backend_venv:/app/.venv
       # Cache dos modelos do Hugging Face: evita baixar o bge-m3 (~2 GB) a cada recriação do contêiner
       - hf_cache:/root/.cache/huggingface
-    command: uvicorn main:app --host 0.0.0.0 --port 8000
+    command: uvicorn main:app --host 0.0.0.0 --port 8000 --no-server-header
     env_file:
       - ./.env
     environment:

@@ -3,6 +3,19 @@
 # só por usar um nome de domínio aqui em vez de ":80" — nada mais precisa ser configurado.
 # HTTP continua ativo só pro desafio ACME e pra redirecionar pra HTTPS (comportamento padrão).
 assistentecacic.me {
+	# Nenhum recurso externo é carregado (fontes e imagens já são servidas pelo próprio
+	# domínio) — a CSP pode ficar restrita a 'self'. 'unsafe-inline' em script/style é
+	# necessário porque o Next.js injeta dados de hidratação em <script> inline; isso não
+	# abre brecha de XSS por si só (a aplicação não tem nenhum vetor de injeção de script,
+	# ver auditoria de segurança), só não bloqueia script inline especificamente.
+	header {
+		Strict-Transport-Security "max-age=31536000"
+		X-Content-Type-Options "nosniff"
+		X-Frame-Options "DENY"
+		Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self'; frame-ancestors 'none'; base-uri 'self'; form-action 'self'"
+		-Server
+	}
+
 	handle /api/* {
 		reverse_proxy backend:8000
 	}

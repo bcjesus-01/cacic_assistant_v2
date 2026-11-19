@@ -30,4 +30,4 @@ COPY --from=builder /app/.venv /app/.venv
 COPY . /app
 ENV PATH="/app/.venv/bin:$PATH"
 
-CMD ["python", "-m", "uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
+CMD ["python", "-m", "uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000", "--no-server-header"]

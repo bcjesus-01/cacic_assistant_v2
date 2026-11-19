@@ -39,11 +39,19 @@ async def lifespan(app: FastAPI):
     logger.info("Pool do Postgres encerrado.")
 
 
+# Em produção não há necessidade de expor o schema completo da API publicamente. Hoje isso já
+# não vaza porque o Caddy só roteia /api/* pro backend e o FastAPI expõe /docs na raiz — mas
+# essa flag deixa a decisão explícita, em vez de depender desse acaso de roteamento.
+API_DOCS_HABILITADOS = os.getenv("API_DOCS_HABILITADOS", "true").lower() == "true"
+
 app = FastAPI(
     title="CACIC Assistant API",
     description="Backend de Inteligência Artificial para o Centro Acadêmico",
     version="2.0.0",
     lifespan=lifespan,
+    docs_url="/docs" if API_DOCS_HABILITADOS else None,
+    redoc_url="/redoc" if API_DOCS_HABILITADOS else None,
+    openapi_url="/openapi.json" if API_DOCS_HABILITADOS else None,
 )
 
 # Origens permitidas, separadas por vírgula. Em produção, defina CORS_ORIGINS com o domínio do frontend.
