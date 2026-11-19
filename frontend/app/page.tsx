@@ -362,14 +362,35 @@ export default function Home() {
         </defs>
       </svg>
 
+      <a href="#campo-pergunta" className="sr-only">
+        Pular para o campo de pergunta
+      </a>
+      <h1 className="sr-only">Assistente Virtual CACIC</h1>
+
       <div className="cacic-page">
+        <svg className="cacic-hexgrid" aria-hidden="true" focusable="false">
+          <defs>
+            <pattern id="cacic-hexgrid-tile" width="38.1" height="66" patternUnits="userSpaceOnUse">
+              <g fill="none" stroke="var(--bg-grid)" strokeWidth="1">
+                <polygon points="19.05,0 38.1,11 38.1,33 19.05,44 0,33 0,11" />
+                <polygon points="0,33 19.05,44 19.05,66 0,77 -19.05,66 -19.05,44" />
+                <polygon points="38.1,33 57.15,44 57.15,66 38.1,77 19.05,66 19.05,44" />
+                <polygon points="0,-33 19.05,-22 19.05,0 0,11 -19.05,0 -19.05,-22" />
+                <polygon points="38.1,-33 57.15,-22 57.15,0 38.1,11 19.05,0 19.05,-22" />
+              </g>
+            </pattern>
+          </defs>
+          <rect width="100%" height="100%" fill="url(#cacic-hexgrid-tile)" />
+        </svg>
+
         <header className="cacic-header">
           <div className="cacic-header__id">
             <img className="cacic-logo" src="/cacic-logo.svg" alt="CACIC" />
           </div>
-          <span className="cacic-handle">@cacicuesc</span>
+          <span className="cacic-handle">Centro Acadêmico de Ciência da Computação da Uesc</span>
           <span className="cacic-dots" aria-hidden="true"></span>
           <span className="cacic-status">Online</span>
+          <span className="cacic-dev-badge">Em desenvolvimento</span>
           <button
             type="button"
             className="cacic-btn"
@@ -421,7 +442,7 @@ export default function Home() {
           </main>
         ) : (
           <main className="cacic-thread">
-            <div className="cacic-thread__inner">
+            <div className="cacic-thread__inner" role="log" aria-live="polite" aria-label="Conversa com o assistente">
               <div className="cacic-day">Hoje</div>
 
               {messages.map((msg, index) => {
@@ -563,6 +584,7 @@ export default function Home() {
             )}
             <form onSubmit={sendMessage} className={`cacic-composer${isLoading ? " cacic-composer--busy" : ""}`}>
               <textarea
+                id="campo-pergunta"
                 ref={textareaRef}
                 rows={1}
                 value={input}
@@ -579,7 +601,10 @@ export default function Home() {
                 </svg>
               </button>
             </form>
-            <p className="cacic-note">O assistente pode errar. Confirme sempre no texto oficial do regimento.</p>
+            <p className="cacic-note">
+              O assistente ainda está em desenvolvimento e pode errar. Confirme sempre no texto
+              oficial do regimento.
+            </p>
           </div>
         </div>
       </div>
