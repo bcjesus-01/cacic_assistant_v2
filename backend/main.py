@@ -9,6 +9,7 @@ from psycopg_pool import AsyncConnectionPool
 
 from agent.graph import DB_URI, construir_grafo
 from api.routes import router
+from limites import preparar_tabela_uso
 
 logging.basicConfig(
     level=os.getenv("LOG_LEVEL", "INFO").upper(),
@@ -30,7 +31,9 @@ async def lifespan(app: FastAPI):
     ) as pool:
         checkpointer = AsyncPostgresSaver(pool)
         await checkpointer.setup()
+        await preparar_tabela_uso(pool)
         app.state.app_grafo = workflow.compile(checkpointer=checkpointer)
+        app.state.pg_pool = pool
         logger.info("Pronto.")
         yield
     logger.info("Pool do Postgres encerrado.")

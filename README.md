@@ -249,6 +249,8 @@ uv run python eval/avaliar.py --arquivo eval/perguntas_heldout.json --rodadas 3
 | `RAG_K_BUSCA` | Opcional. Trechos buscados no Qdrant (padrão: `8`) |
 | `RAG_K_CONTEXTO` | Opcional. Trechos enviados ao modelo, depois de remover duplicados (padrão: `5`) |
 | `LIMITE_MENSAGENS_POR_THREAD` | Opcional. Mensagens (pergunta + resposta) permitidas numa mesma conversa, para proteger a cota grátis do Gemini (padrão: `15`) |
+| `LIMITE_MENSAGENS_POR_IP_POR_DIA` | Opcional. Mensagens aceitas por IP por dia (padrão: `50`) |
+| `TETO_MENSAGENS_POR_DIA` | Opcional. Teto global de mensagens aceitas por dia, somando todos os IPs (padrão: `400`) |
 | `LOG_LEVEL` | Opcional. Nível de log do backend (padrão: `INFO`) |
 | `CORS_ORIGINS` | Opcional. Origens permitidas, separadas por vírgula (padrão: `http://localhost:3000`) |
 | `NEXT_PUBLIC_API_URL` | Opcional, no frontend. URL base da API (padrão: `http://localhost:8000`) |
@@ -266,7 +268,7 @@ uv run python eval/avaliar.py --arquivo eval/perguntas_heldout.json --rodadas 3
 - `thread_id`: identificador da sessão (de 8 a 64 caracteres: letras, números, `_` e `-`). O frontend gera um UUID por navegador, e cada `thread_id` tem o próprio histórico.
 - `message`: de 1 a 2000 caracteres.
 
-A resposta é um fluxo `text/event-stream`. Cada evento tem o formato `data: "<token como string JSON>"`, e o fim do fluxo é sinalizado por `data: [DONE]`. Se ocorrer uma falha durante a geração, o servidor envia um evento `event: error` com uma mensagem genérica (o detalhe técnico fica só no log) e encerra com `[DONE]`. Se a conversa já atingiu `LIMITE_MENSAGENS_POR_THREAD`, o servidor envia `event: limite` em vez de gerar uma resposta.
+A resposta é um fluxo `text/event-stream`. Cada evento tem o formato `data: "<token como string JSON>"`, e o fim do fluxo é sinalizado por `data: [DONE]`. Se ocorrer uma falha durante a geração, o servidor envia um evento `event: error` com uma mensagem genérica (o detalhe técnico fica só no log) e encerra com `[DONE]`. Se a conversa já atingiu `LIMITE_MENSAGENS_POR_THREAD`, o servidor envia `event: limite` em vez de gerar uma resposta. Se o IP já atingiu `LIMITE_MENSAGENS_POR_IP_POR_DIA` ou o dia já atingiu `TETO_MENSAGENS_POR_DIA`, o servidor envia `event: bloqueado`.
 
 Também há `GET /health`, que responde `{"status": "ok"}`.
 
@@ -286,6 +288,7 @@ Também há `GET /health`, que responde `{"status": "ok"}`.
 - **Erros sem vazamento:** exceções internas vão para o log; o cliente recebe só uma mensagem genérica.
 - **Reescrita da pergunta de busca:** antes de buscar no Qdrant, uma pergunta de acompanhamento ("e para a matriz 2012?") é reescrita numa versão independente usando o histórico da conversa — só para a busca; o prompt de resposta continua vendo as mensagens originais. Usa um cliente Gemini dedicado (mesmos modelos principal/reserva, saída bem menor), com uma tag própria nos eventos do LangGraph para a rota de SSE não repassar esses tokens ao cliente nem confundir essa chamada interna com uma troca para o modelo de reserva. Qualquer falha ou saída vazia cai para a pergunta original.
 - **Limite por conversa:** com orçamento zero, o limite de `LIMITE_MENSAGENS_POR_THREAD` não é sobre custo, é sobre não esgotar a cota grátis do Gemini. A rota confere o tamanho da conversa com `app_grafo.aget_state(config)` (lê o checkpoint sem rodar nenhum nó do grafo) antes de gerar qualquer resposta; ao atingir o limite, envia o evento SSE `limite` sem nenhuma chamada ao Gemini. O frontend mostra "Nova conversa" nesse caso (não "Tentar novamente", que só repetiria a mesma pergunta) e desabilita a caixa de texto até o aluno clicar.
+- **Limite por IP e teto diário global:** o limite por conversa é fácil de burlar (o botão "Nova conversa" gera outro `thread_id`), e a cota do Gemini (free tier) é compartilhada por toda a chave de API, não por aluno. `backend/limites.py` guarda, por dia, quantas mensagens cada IP mandou e o total aceito (uma linha-sentinela `__global__` na mesma tabela, incrementada com o mesmo `UPSERT ... RETURNING` atômico usado pelo IP — sem `SELECT SUM` sujeito a corrida). O IP vem de `X-Forwarded-For` em produção (confiável porque o Caddy é o único ponto de entrada e não repassa o header que o cliente tentar forjar) ou da conexão direta em desenvolvimento. O contador global conta em dobro uma pergunta de acompanhamento (custa uma chamada extra ao Gemini, para reescrever a busca) — erra para o lado seguro, nunca subconta chamadas reais. Falha ao acessar o Postgres deixa passar (o checkpointer já depende dele; se estiver fora do ar, o chat já não funciona de qualquer jeito). Excedendo qualquer um dos dois limites, o servidor envia `event: bloqueado`; o frontend desabilita a caixa de texto sem oferecer nenhum botão de ação (nem "tentar de novo" nem "nova conversa" ajudam nesse caso).
 
 ## Limitações conhecidas
 

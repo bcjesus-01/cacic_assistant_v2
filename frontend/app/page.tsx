@@ -108,6 +108,7 @@ export default function Home() {
   const [isLoading, setIsLoading] = useState(false);
   const [falhou, setFalhou] = useState(false);
   const [limiteAtingido, setLimiteAtingido] = useState(false);
+  const [bloqueadoPorHoje, setBloqueadoPorHoje] = useState(false);
   const ultimaPerguntaRef = useRef<string>("");
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
@@ -141,6 +142,7 @@ export default function Home() {
     setMessages([]);
     setFalhou(false);
     setLimiteAtingido(false);
+    setBloqueadoPorHoje(false);
   };
 
   const enviar = async (texto: string) => {
@@ -150,6 +152,7 @@ export default function Home() {
     setIsLoading(true);
     setFalhou(false);
     setLimiteAtingido(false);
+    setBloqueadoPorHoje(false);
 
     const updateAssistant = (text: string, extra?: Partial<Message>) =>
       setMessages((prev) => {
@@ -181,6 +184,7 @@ export default function Home() {
         finished: false,
         erro: "",
         limite: false,
+        bloqueado: false,
         fontes: [] as string[],
       };
 
@@ -219,6 +223,11 @@ export default function Home() {
           // Conversa longa demais: não adianta "tentar novamente", precisa de "nova conversa".
           stream.erro = conteudo;
           stream.limite = true;
+        } else if (nomeEvento === "bloqueado") {
+          // Limite por IP ou teto diário: nem "tentar novamente" nem "nova conversa" ajudam
+          // (o bloqueio não é por conversa, é por IP/dia) — só a mensagem, sem botão de ação.
+          stream.erro = conteudo;
+          stream.bloqueado = true;
         } else if (nomeEvento === "reset") {
           // O modelo de reserva assumiu: descarta o texto parcial e recomeça.
           stream.texto = "";
@@ -262,6 +271,8 @@ export default function Home() {
         );
         if (stream.limite) {
           setLimiteAtingido(true);
+        } else if (stream.bloqueado) {
+          setBloqueadoPorHoje(true);
         } else {
           setFalhou(true);
         }
@@ -282,7 +293,7 @@ export default function Home() {
 
   const enviarPergunta = () => {
     const texto = input.trim();
-    if (!texto || isLoading || limiteAtingido) return;
+    if (!texto || isLoading || limiteAtingido || bloqueadoPorHoje) return;
     setInput("");
     void enviar(texto);
   };
@@ -300,7 +311,7 @@ export default function Home() {
   };
 
   const preencherSugestao = (texto: string) => {
-    if (isLoading || limiteAtingido) return;
+    if (isLoading || limiteAtingido || bloqueadoPorHoje) return;
     setInput(texto);
     textareaRef.current?.focus();
   };
@@ -395,7 +406,7 @@ export default function Home() {
             type="button"
             className="cacic-btn"
             onClick={novaConversa}
-            disabled={isLoading || messages.length === 0}
+            disabled={isLoading || messages.length === 0 || bloqueadoPorHoje}
           >
             <svg viewBox="0 0 24 24" aria-hidden="true">
               <path d="M12 5v14M5 12h14" />
@@ -462,7 +473,9 @@ export default function Home() {
                 const streamingVazio =
                   isLoading && index === messages.length - 1 && msg.content.trim() === "";
                 const comErro =
-                  (falhou || limiteAtingido) && index === messages.length - 1 && !isLoading;
+                  (falhou || limiteAtingido || bloqueadoPorHoje) &&
+                  index === messages.length - 1 &&
+                  !isLoading;
                 const podeAvaliar = !streamingVazio && !comErro && msg.content.trim() !== "";
 
                 return (
@@ -497,7 +510,7 @@ export default function Home() {
                             </div>
                           )}
 
-                          {comErro && (
+                          {comErro && !bloqueadoPorHoje && (
                             <div>
                               <button type="button" className="cacic-btn" onClick={limiteAtingido ? novaConversa : tentarNovamente}>
                                 <svg viewBox="0 0 24 24" aria-hidden="true">
@@ -593,9 +606,9 @@ export default function Home() {
                 placeholder="Pergunte sobre matrícula, faltas, trancamento…"
                 maxLength={2000}
                 aria-label="Sua pergunta"
-                disabled={isLoading || limiteAtingido}
+                disabled={isLoading || limiteAtingido || bloqueadoPorHoje}
               />
-              <button type="submit" className="cacic-send" aria-label="Enviar pergunta" disabled={isLoading || limiteAtingido || !input.trim()}>
+              <button type="submit" className="cacic-send" aria-label="Enviar pergunta" disabled={isLoading || limiteAtingido || bloqueadoPorHoje || !input.trim()}>
                 <svg viewBox="0 0 24 24" aria-hidden="true">
                   <path d="M6 6l6 6-6 6M13 6l6 6-6 6" />
                 </svg>

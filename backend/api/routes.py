@@ -8,16 +8,30 @@ from langchain_core.messages import HumanMessage
 
 from agent.prompts import RECUSA_PADRAO
 from agent.reescrita import TAG_CHAMADA_INTERNA
+from api.ip_cliente import extrair_ip
 from api.schemas import ChatRequest, FeedbackRequest
 from api.controle_stream import ControleStream
-from api.sse import DONE, MENSAGEM_ERRO, MENSAGEM_LIMITE, RESET, extrair_texto, sse
+from api.sse import (
+    DONE,
+    MENSAGEM_ERRO,
+    MENSAGEM_LIMITE,
+    MENSAGEM_LIMITE_IP,
+    MENSAGEM_TETO_GLOBAL,
+    RESET,
+    extrair_texto,
+    sse,
+)
+from limites import ResultadoUso, dia_atual, verificar_e_registrar
 from registro import registrar_recusa, salvar_feedback
 
 logger = logging.getLogger(__name__)
 router = APIRouter()
 
-# Orçamento é zero: o limite é sobre não esgotar a cota grátis do Gemini, não sobre dinheiro.
+# Orçamento é zero: os três limites abaixo são sobre não esgotar a cota grátis do Gemini
+# (free tier, compartilhada por toda a chave de API), não sobre dinheiro.
 LIMITE_MENSAGENS_POR_THREAD = int(os.getenv("LIMITE_MENSAGENS_POR_THREAD", 15))
+LIMITE_MENSAGENS_POR_IP_POR_DIA = int(os.getenv("LIMITE_MENSAGENS_POR_IP_POR_DIA", 50))
+TETO_MENSAGENS_POR_DIA = int(os.getenv("TETO_MENSAGENS_POR_DIA", 400))
 
 
 @router.post("/chat/stream")
@@ -25,13 +39,38 @@ async def chat_stream(dados: ChatRequest, request: Request):
     app_grafo = request.app.state.app_grafo
     config = {"configurable": {"thread_id": dados.thread_id}}
     mensagem_humana = HumanMessage(content=dados.message)
+    ip = extrair_ip(
+        request.headers.get("x-forwarded-for"),
+        request.client.host if request.client else None,
+    )
 
     async def gerador_eventos():
         controle = ControleStream()
         try:
             estado = await app_grafo.aget_state(config)
-            if len(estado.values.get("messages", [])) >= LIMITE_MENSAGENS_POR_THREAD:
+            mensagens_existentes = estado.values.get("messages", [])
+            if len(mensagens_existentes) >= LIMITE_MENSAGENS_POR_THREAD:
                 yield sse(MENSAGEM_LIMITE, event="limite")
+                yield DONE
+                return
+
+            # Pergunta de acompanhamento custa uma chamada extra ao Gemini (reescrita para a
+            # busca, ver agent/reescrita.py); conta em dobro no teto global por isso.
+            peso_global = 2 if mensagens_existentes else 1
+            resultado = await verificar_e_registrar(
+                request.app.state.pg_pool,
+                ip,
+                dia_atual(),
+                peso_global,
+                LIMITE_MENSAGENS_POR_IP_POR_DIA,
+                TETO_MENSAGENS_POR_DIA,
+            )
+            if resultado is ResultadoUso.TETO_GLOBAL:
+                yield sse(MENSAGEM_TETO_GLOBAL, event="bloqueado")
+                yield DONE
+                return
+            if resultado is ResultadoUso.LIMITE_IP:
+                yield sse(MENSAGEM_LIMITE_IP, event="bloqueado")
                 yield DONE
                 return
 
