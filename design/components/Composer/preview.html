@@ -1,0 +1,18 @@
+<!-- @dsCard group="Chat" height=360 subtitle="Campo de mensagem: vazio, preenchido, enviando" -->
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Composer · preview</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><defs><linearGradient id="cacic-hex" x1="0" y1="0" x2="1" y2="1"><stop offset="0" style="stop-color:var(--coral)"/><stop offset="0.55" style="stop-color:var(--magenta)"/><stop offset="1" style="stop-color:var(--violet)"/></linearGradient></defs></svg>
+<div class="cacic-stage cacic-stage--grid">
+  <div class="cacic-spec"><span class="cacic-spec__tag">Vazio · enviar desativado</span><form class="cacic-composer" onsubmit="return false"><textarea rows="1" aria-label="Sua pergunta" placeholder="Pergunte sobre matrícula, faltas, trancamento…"></textarea><button class="cacic-send" type="submit" aria-label="Enviar pergunta" disabled><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l6 6-6 6M13 6l6 6-6 6"/></svg></button></form></div>
+  <div class="cacic-spec"><span class="cacic-spec__tag">Preenchido</span><form class="cacic-composer" onsubmit="return false"><textarea rows="1" aria-label="Sua pergunta" placeholder="Pergunte sobre matrícula, faltas, trancamento…">Como funciona o aproveitamento de estudos?</textarea><button class="cacic-send" type="submit" aria-label="Enviar pergunta"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l6 6-6 6M13 6l6 6-6 6"/></svg></button></form></div>
+  <div class="cacic-spec"><span class="cacic-spec__tag">Enviando</span><form class="cacic-composer cacic-composer--busy" onsubmit="return false"><textarea rows="1" aria-label="Sua pergunta" placeholder="Pergunte sobre matrícula, faltas, trancamento…" disabled>E se eu precisar trancar a matrícula?</textarea><button class="cacic-send" type="submit" aria-label="Enviar pergunta" disabled><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l6 6-6 6M13 6l6 6-6 6"/></svg></button></form></div>
+</div>
+</body>
+</html>

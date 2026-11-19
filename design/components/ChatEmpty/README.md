@@ -1,0 +1,1 @@
+Tela inicial do assistente: pílula, título `display` com a palavra "regimento" em `cacic-grad`, frase de apoio e quatro cards de tópico, com o campo de mensagem no rodapé. Use quando não há mensagens na conversa. O conteúdo vertical fica centralizado entre o cabeçalho e o campo.

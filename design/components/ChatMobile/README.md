@@ -1,0 +1,1 @@
+Conversa no celular (390px): cabeçalho compacto, balões com margem de 16px, chips rolando na horizontal e aviso curto sob o campo ("O assistente pode errar. Confirme no texto oficial."). Sem a linha de ações sob a resposta, para poupar altura.

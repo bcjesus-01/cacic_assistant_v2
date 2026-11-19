@@ -1,0 +1,62 @@
+/* CACIC — gerado a partir de tokens.json (dois temas: dark é o padrão, light é o alternativo). Regenere se tokens.json mudar. */
+:root, [data-theme="dark"] {
+  --bg: #191a1a;
+  --bg-grid: #232424;
+  --surface: #222324;
+  --surface-raised: #2d2e30;
+  --line: #38393c;
+  --line-strong: #82838a;
+  --ink: #f6f6f8;
+  --ink-muted: #b0b1ba;
+  --indigo: #4a47d3;
+  --on-indigo: #ffffff;
+  --indigo-deep: #321cb3;
+  --link: #a3a1ff;
+  --yellow: #fcc72d;
+  --on-yellow: #191a1a;
+  --coral: #ff2a62;
+  --magenta: #d400ad;
+  --violet: #ab00fb;
+  --ok: #46d89b;
+  --danger: #ff7a88;
+  --focus: #fcc72d;
+  --shadow-composer: 0 12px 40px rgba(0, 0, 0, 0.45);
+}
+[data-theme="light"] {
+  --bg: #f5f4fb;
+  --bg-grid: #e7e5f5;
+  --surface: #ffffff;
+  --surface-raised: #ecebf7;
+  --line: #d9d7ec;
+  --line-strong: #6e6d88;
+  --ink: #16162b;
+  --ink-muted: #55556f;
+  --indigo: #4a47d3;
+  --on-indigo: #ffffff;
+  --indigo-deep: #321cb3;
+  --link: #3b38bd;
+  --yellow: #fcc72d;
+  --on-yellow: #191a1a;
+  --coral: #d6154f;
+  --magenta: #b0008f;
+  --violet: #8a00cc;
+  --ok: #0b7a4b;
+  --danger: #c4102f;
+  --focus: #3b38bd;
+  --shadow-composer: 0 12px 40px rgba(22, 22, 43, 0.12);
+}
+:root {
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 32px;
+  --space-7: 48px;
+  --space-8: 64px;
+  --radius-sm: 8px;
+  --radius-md: 14px;
+  --radius-lg: 22px;
+  --radius-pill: 999px;
+  --font-sans: "Poppins", system-ui, -apple-system, "Segoe UI", sans-serif;
+}

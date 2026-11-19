@@ -1,0 +1,71 @@
+<!-- @dsCard height=288 -->
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<title>CACIC</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;800&display=swap" rel="stylesheet">
+<style>
+  html, body { margin: 0; height: 100%; }
+  body { background: var(--bg); color: var(--ink); font-family: var(--font-sans); overflow: hidden; }
+  .cover { position: relative; height: 288px; overflow: hidden; }
+  .art { position: absolute; top: 0; left: 480px; width: 480px; height: 288px; overflow: hidden; }
+  .art svg { display: block; width: 480px; height: 288px; }
+  .indigo { fill: var(--indigo); }
+  .yellow { fill: var(--yellow); }
+  .violet { fill: var(--violet); }
+  .coral  { fill: var(--coral); }
+  .blk { rx: var(--radius-md); }
+  .hex { fill: none; stroke-width: 2; stroke-linejoin: round; }
+  .hex.cut { stroke: var(--bg); }
+  .hex.ring { stroke: var(--violet); }
+  .words { position: absolute; left: var(--space-6); bottom: var(--space-6); max-width: 440px; }
+  .name { margin: 0; font-size: 112px; line-height: .95; font-weight: 800; letter-spacing: -.02em; color: var(--ink); }
+  .tag { margin: var(--space-2) 0 0 4px; font-size: 14px; line-height: 20px; color: var(--ink-muted); }
+</style>
+</head>
+<body>
+<div class="cover">
+<div class="art" aria-hidden="true">
+<svg viewBox="0 0 480 288" width="480" height="288">
+<!--
+  blocks      indigo 144×272 sangrando pelo topo (a laje principal) · yellow 128×144 · violet 176×176 sangrando pelo topo e pela direita · coral 96×96 (o sinal) — bottoms em y=256 (space-6 acima da borda), vãos de space-4
+  arrangement uma laje alta de indigo com satélites, as bases alinhadas numa linha; violet e coral empilhados na coluna da direita
+  pattern     favo de hexágonos (R=18, traço 2): o logo do CACIC é um favo, então o motivo literal vence a grade de pontos; doze hexágonos recortados em indigo na cor do fundo e nove em violet sobre o fundo, acima do bloco amarelo
+  scales      lados em múltiplos de space-2; vãos space-4; margem inferior space-6; cantos radius-md
+-->
+<rect class="indigo blk" x="16" y="-16" width="144" height="272" rx="14"/>
+<rect class="yellow blk" x="176" y="112" width="128" height="144" rx="14"/>
+<rect class="violet blk" x="320" y="-16" width="176" height="176" rx="14"/>
+<rect class="coral blk" x="320" y="176" width="96" height="80" rx="14"/>
+<polygon class="hex cut" points="40.0,66.0 55.6,75.0 55.6,93.0 40.0,102.0 24.4,93.0 24.4,75.0"/>
+<polygon class="hex cut" points="71.2,66.0 86.8,75.0 86.8,93.0 71.2,102.0 55.6,93.0 55.6,75.0"/>
+<polygon class="hex cut" points="102.4,66.0 117.9,75.0 117.9,93.0 102.4,102.0 86.8,93.0 86.8,75.0"/>
+<polygon class="hex cut" points="55.6,93.0 71.2,102.0 71.2,120.0 55.6,129.0 40.0,120.0 40.0,102.0"/>
+<polygon class="hex cut" points="86.8,93.0 102.4,102.0 102.4,120.0 86.8,129.0 71.2,120.0 71.2,102.0"/>
+<polygon class="hex cut" points="117.9,93.0 133.5,102.0 133.5,120.0 117.9,129.0 102.4,120.0 102.4,102.0"/>
+<polygon class="hex cut" points="40.0,120.0 55.6,129.0 55.6,147.0 40.0,156.0 24.4,147.0 24.4,129.0"/>
+<polygon class="hex cut" points="71.2,120.0 86.8,129.0 86.8,147.0 71.2,156.0 55.6,147.0 55.6,129.0"/>
+<polygon class="hex cut" points="102.4,120.0 117.9,129.0 117.9,147.0 102.4,156.0 86.8,147.0 86.8,129.0"/>
+<polygon class="hex cut" points="55.6,147.0 71.2,156.0 71.2,174.0 55.6,183.0 40.0,174.0 40.0,156.0"/>
+<polygon class="hex cut" points="86.8,147.0 102.4,156.0 102.4,174.0 86.8,183.0 71.2,174.0 71.2,156.0"/>
+<polygon class="hex cut" points="117.9,147.0 133.5,156.0 133.5,174.0 117.9,183.0 102.4,174.0 102.4,156.0"/>
+<polygon class="hex ring" points="206.0,0.0 221.6,9.0 221.6,27.0 206.0,36.0 190.4,27.0 190.4,9.0"/>
+<polygon class="hex ring" points="237.2,0.0 252.8,9.0 252.8,27.0 237.2,36.0 221.6,27.0 221.6,9.0"/>
+<polygon class="hex ring" points="268.4,0.0 283.9,9.0 283.9,27.0 268.4,36.0 252.8,27.0 252.8,9.0"/>
+<polygon class="hex ring" points="221.6,27.0 237.2,36.0 237.2,54.0 221.6,63.0 206.0,54.0 206.0,36.0"/>
+<polygon class="hex ring" points="252.8,27.0 268.4,36.0 268.4,54.0 252.8,63.0 237.2,54.0 237.2,36.0"/>
+<polygon class="hex ring" points="283.9,27.0 299.5,36.0 299.5,54.0 283.9,63.0 268.4,54.0 268.4,36.0"/>
+<polygon class="hex ring" points="206.0,54.0 221.6,63.0 221.6,81.0 206.0,90.0 190.4,81.0 190.4,63.0"/>
+<polygon class="hex ring" points="237.2,54.0 252.8,63.0 252.8,81.0 237.2,90.0 221.6,81.0 221.6,63.0"/>
+<polygon class="hex ring" points="268.4,54.0 283.9,63.0 283.9,81.0 268.4,90.0 252.8,81.0 252.8,63.0"/>
+</svg>
+</div>
+<div class="words">
+<h1 class="name">CACIC</h1>
+<p class="tag">Centro Acadêmico de Computação da UESC</p>
+</div>
+</div>
+</body>
+</html>

@@ -1,0 +1,3 @@
+- `cacic-logo.svg`: logo do CACIC, favo de hexágonos com a palavra "CACIC". Duas tintas fixas: índigo #4A47D3 e amarelo #FCC72D. Como é um `<img>`, a cor não herda de CSS: não use `currentColor` nem tente recolorir.
+- Use sobre `bg` escuro (padrão) e sobre `surface`. Sobre fundo claro o amarelo mede cerca de 1,5:1: só em peças grandes.
+- Altura mínima de 40px; no cabeçalho do chat, 52px no desktop e 40px no celular.

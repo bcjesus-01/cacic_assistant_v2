@@ -1,0 +1,1 @@
+Conversa em andamento no desktop: divisor de dia, mensagens do aluno e do assistente, indicador de digitação, chips e campo de mensagem. A coluna fica ancorada embaixo e rola para a mensagem mais recente. Nesta vitrine, escrever e enviar uma pergunta adiciona o balão do aluno à conversa.

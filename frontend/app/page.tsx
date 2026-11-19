@@ -1,10 +1,11 @@
 "use client";
-import { useState, useRef, useEffect, FormEvent } from "react";
+import { useState, useRef, useEffect, FormEvent, KeyboardEvent } from "react";
 import ReactMarkdown from "react-markdown";
 
 type Message = {
   role: "user" | "assistant";
   content: string;
+  hora: string;
   fontes?: string[];
   votado?: "util" | "nao_util";
 };
@@ -13,6 +14,32 @@ const API_BASE = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000";
 const API_URL = `${API_BASE}/api/v1/chat/stream`;
 const FEEDBACK_URL = `${API_BASE}/api/v1/feedback`;
 const SESSION_KEY = "cacic-session-id";
+
+// Temas reais do FAQ/avaliação do projeto — não placeholder (ver design/README.md).
+const TOPICOS = [
+  {
+    titulo: "Horas complementares",
+    texto: "Quantas horas preciso e como comprovar.",
+    pergunta: "Quantas horas complementares eu preciso para me formar?",
+  },
+  {
+    titulo: "Trancamento de matrícula",
+    texto: "Prazos, limite de semestres e como pedir.",
+    pergunta: "O que é o trancamento total de matrícula?",
+  },
+  {
+    titulo: "Estágio e TCC",
+    texto: "Se são a mesma coisa e qual a carga horária.",
+    pergunta: "O TCC e o estágio são a mesma coisa?",
+  },
+  {
+    titulo: "Mais Futuro",
+    texto: "Quem pode receber o auxílio permanência.",
+    pergunta: "Quem pode receber o Mais Futuro?",
+  },
+];
+
+const SUGESTOES = TOPICOS.map((t) => t.pergunta);
 
 // crypto.randomUUID só existe em contexto seguro (https ou localhost); há um plano B.
 function novoId(): string {
@@ -35,6 +62,46 @@ function obterSessionId(): string {
   }
 }
 
+function horaAgora(): string {
+  return new Date().toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" });
+}
+
+// Avatar hexagonal: um por bloco de mensagem do assistente (design/components/Brand/README.md).
+function AvatarAssistente() {
+  return (
+    <svg className="cacic-avatar" viewBox="0 0 36 40" aria-hidden="true">
+      <path
+        d="M18 2.5 33.15 11.25v17.5L18 37.5 2.85 28.75v-17.5z"
+        fill="none"
+        stroke="url(#cacic-hex)"
+        strokeWidth="3"
+        strokeLinejoin="round"
+      />
+      <path
+        d="M18 12l6.9 4v8L18 28l-6.9-4v-8z"
+        fill="var(--yellow)"
+        stroke="var(--yellow)"
+        strokeWidth="1.5"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+}
+
+function IconeHexagono() {
+  return (
+    <svg className="cacic-topic__hex" viewBox="0 0 36 40" aria-hidden="true">
+      <path
+        d="M18 2.5 33.15 11.25v17.5L18 37.5 2.85 28.75v-17.5z"
+        fill="none"
+        stroke="url(#cacic-hex)"
+        strokeWidth="3"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+}
+
 export default function Home() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
@@ -43,6 +110,7 @@ export default function Home() {
   const [limiteAtingido, setLimiteAtingido] = useState(false);
   const ultimaPerguntaRef = useRef<string>("");
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
   const sessionIdRef = useRef<string>("");
 
   useEffect(() => {
@@ -52,6 +120,14 @@ export default function Home() {
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
+
+  // Campo de texto cresce com o conteúdo, até um limite (mesmo padrão do design).
+  useEffect(() => {
+    const el = textareaRef.current;
+    if (!el) return;
+    el.style.height = "auto";
+    el.style.height = `${Math.min(el.scrollHeight, 144)}px`;
+  }, [input]);
 
   const novaConversa = () => {
     if (isLoading) return;
@@ -68,9 +144,9 @@ export default function Home() {
   };
 
   const enviar = async (texto: string) => {
-    const userMsg: Message = { role: "user", content: texto };
+    const userMsg: Message = { role: "user", content: texto, hora: horaAgora() };
     ultimaPerguntaRef.current = texto;
-    setMessages((prev) => [...prev, userMsg, { role: "assistant", content: "" }]);
+    setMessages((prev) => [...prev, userMsg, { role: "assistant", content: "", hora: horaAgora() }]);
     setIsLoading(true);
     setFalhou(false);
     setLimiteAtingido(false);
@@ -204,12 +280,29 @@ export default function Home() {
     }
   };
 
-  const sendMessage = (e: FormEvent) => {
-    e.preventDefault();
+  const enviarPergunta = () => {
     const texto = input.trim();
-    if (!texto || isLoading) return;
+    if (!texto || isLoading || limiteAtingido) return;
     setInput("");
     void enviar(texto);
+  };
+
+  const sendMessage = (e: FormEvent) => {
+    e.preventDefault();
+    enviarPergunta();
+  };
+
+  const aoPressionarTecla = (e: KeyboardEvent<HTMLTextAreaElement>) => {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      enviarPergunta();
+    }
+  };
+
+  const preencherSugestao = (texto: string) => {
+    if (isLoading || limiteAtingido) return;
+    setInput(texto);
+    textareaRef.current?.focus();
   };
 
   // Reenvia a última pergunta. A tentativa que falhou sai da tela; o histórico do servidor
@@ -248,144 +341,248 @@ export default function Home() {
     }
   };
 
+  const copiarResposta = (texto: string) => {
+    navigator.clipboard?.writeText(texto).catch(() => {
+      /* sem permissão de clipboard: não quebra a UI */
+    });
+  };
+
+  const emConversa = messages.length > 0;
+
   return (
-    <main className="flex min-h-screen flex-col items-center bg-page p-4">
-      <div className="w-full max-w-3xl bg-surface rounded-xl shadow-lg overflow-hidden flex flex-col h-[90vh]">
-        {/* Cabeçalho */}
-        <div className="bg-primary p-4 text-primary-ink flex items-start justify-between gap-4">
-          <div>
-            <h1 className="text-xl font-bold">Assistente Institucional CACIC</h1>
-            <p className="text-sm text-primary-ink/70">
-              Universidade Estadual de Santa Cruz (UESC)
-            </p>
+    <>
+      {/* Gradiente usado pelo contorno do avatar/hexágonos dos tópicos — declarado uma vez só. */}
+      <svg width="0" height="0" style={{ position: "absolute" }} aria-hidden="true" focusable="false">
+        <defs>
+          <linearGradient id="cacic-hex" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0" stopColor="var(--coral)" />
+            <stop offset="0.55" stopColor="var(--magenta)" />
+            <stop offset="1" stopColor="var(--violet)" />
+          </linearGradient>
+        </defs>
+      </svg>
+
+      <div className="cacic-page">
+        <header className="cacic-header">
+          <div className="cacic-header__id">
+            <img className="cacic-logo" src="/cacic-logo.svg" alt="CACIC" />
           </div>
+          <span className="cacic-handle">@cacicuesc</span>
+          <span className="cacic-dots" aria-hidden="true"></span>
+          <span className="cacic-status">Online</span>
           <button
             type="button"
+            className="cacic-btn"
             onClick={novaConversa}
             disabled={isLoading || messages.length === 0}
-            className="text-sm border border-primary-ink/30 rounded-lg px-3 py-1 hover:bg-primary-ink/10 disabled:opacity-50 transition-colors"
           >
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M12 5v14M5 12h14" />
+            </svg>
             Nova conversa
           </button>
-        </div>
+        </header>
 
-        {/* Área de Mensagens */}
-        <div className="flex-1 overflow-y-auto p-4 space-y-4">
-          {messages.length === 0 && (
-            <div className="text-center text-ink-faint mt-10">
-              Faça uma pergunta sobre o regulamento, horas de ACC ou TCC!
-            </div>
-          )}
-
-          {messages.map((msg, index) => {
-            const streamingAgora = isLoading && index === messages.length - 1;
-            const podeAvaliar =
-              msg.role === "assistant" && msg.content.trim() !== "" && !streamingAgora;
-
-            return (
-              <div
-                key={index}
-                className={`flex flex-col ${
-                  msg.role === "user" ? "items-end" : "items-start"
-                }`}
-              >
-                <div
-                  className={`max-w-[80%] rounded-lg p-3 ${
-                    msg.role === "user"
-                      ? "bg-primary text-primary-ink rounded-br-none whitespace-pre-wrap"
-                      : "bg-surface-sunken text-ink rounded-bl-none border border-border"
-                  }`}
-                >
-                  {msg.role === "assistant" ? (
-                    <div className="resposta-markdown">
-                      <ReactMarkdown>{msg.content}</ReactMarkdown>
-                    </div>
-                  ) : (
-                    msg.content
-                  )}
-                </div>
-
-                {msg.fontes && msg.fontes.length > 0 && (
-                  <p className="mt-1 text-xs text-ink-faint px-1">
-                    Fontes: {msg.fontes.join(", ")}
-                  </p>
-                )}
-
-                {podeAvaliar && (
-                  <div className="mt-1 flex items-center gap-2 px-1 text-xs text-ink-faint">
-                    {msg.votado ? (
-                      <span>Obrigado pelo retorno!</span>
-                    ) : (
-                      <>
-                        <span>Essa resposta ajudou?</span>
-                        <button
-                          type="button"
-                          onClick={() => enviarFeedback(index, true)}
-                          aria-label="Útil"
-                          className="hover:text-ink transition-colors"
-                        >
-                          👍
-                        </button>
-                        <button
-                          type="button"
-                          onClick={() => enviarFeedback(index, false)}
-                          aria-label="Não útil"
-                          className="hover:text-ink transition-colors"
-                        >
-                          👎
-                        </button>
-                      </>
-                    )}
-                  </div>
-                )}
+        {!emConversa ? (
+          <main className="cacic-thread" style={{ display: "flex", flexDirection: "column", justifyContent: "center" }}>
+            <div className="cacic-hero" style={{ paddingTop: 0 }}>
+              <span className="cacic-pill">Assistente virtual do CACIC</span>
+              <h1 className="cacic-hero__title">
+                Tire suas dúvidas
+                <br />
+                sobre o <span className="cacic-grad">regimento</span>
+                <br />
+                da UESC
+              </h1>
+              <p className="cacic-hero__lead">
+                Pergunte em linguagem simples. As respostas vêm com a fonte, para você conferir
+                no documento oficial.
+              </p>
+              <div className="cacic-topics">
+                {TOPICOS.map((t) => (
+                  <button
+                    key={t.titulo}
+                    type="button"
+                    className="cacic-topic"
+                    onClick={() => !isLoading && enviar(t.pergunta)}
+                  >
+                    <IconeHexagono />
+                    <span className="cacic-topic__body">
+                      <span className="cacic-topic__title">{t.titulo}</span>
+                      <span className="cacic-topic__text">{t.texto}</span>
+                    </span>
+                    <svg className="cacic-topic__go" viewBox="0 0 24 24" aria-hidden="true">
+                      <path d="M5 12h14M13 6l6 6-6 6" />
+                    </svg>
+                  </button>
+                ))}
               </div>
-            );
-          })}
-          {falhou && !isLoading && (
-            <div className="flex justify-start">
-              <button
-                type="button"
-                onClick={tentarNovamente}
-                className="text-sm text-primary border border-border rounded-lg px-3 py-1 hover:bg-accent-soft transition-colors"
-              >
-                Tentar novamente
-              </button>
             </div>
-          )}
-          {limiteAtingido && !isLoading && (
-            <div className="flex justify-start">
-              <button
-                type="button"
-                onClick={novaConversa}
-                className="text-sm text-primary border border-border rounded-lg px-3 py-1 hover:bg-accent-soft transition-colors"
-              >
-                Nova conversa
-              </button>
-            </div>
-          )}
-          <div ref={messagesEndRef} />
-        </div>
+          </main>
+        ) : (
+          <main className="cacic-thread">
+            <div className="cacic-thread__inner">
+              <div className="cacic-day">Hoje</div>
 
-        {/* Barra de Digitação */}
-        <form onSubmit={sendMessage} className="p-4 bg-surface-sunken border-t border-border flex gap-2">
-          <input
-            type="text"
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-            placeholder="Digite sua dúvida acadêmica..."
-            maxLength={2000}
-            className="flex-1 border border-border bg-surface rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-primary text-ink"
-            disabled={isLoading || limiteAtingido}
-          />
-          <button
-            type="submit"
-            disabled={isLoading || limiteAtingido || !input.trim()}
-            className="bg-primary text-primary-ink px-6 py-2 rounded-lg font-medium hover:opacity-90 disabled:opacity-50 transition-opacity"
-          >
-            Enviar
-          </button>
-        </form>
+              {messages.map((msg, index) => {
+                if (msg.role === "user") {
+                  return (
+                    <div key={index} className="cacic-msg cacic-msg--user">
+                      <div className="cacic-msg__body">
+                        <span className="cacic-msg__meta">Você · {msg.hora}</span>
+                        <div className="cacic-bubble cacic-bubble--user">
+                          <p>{msg.content}</p>
+                        </div>
+                      </div>
+                    </div>
+                  );
+                }
+
+                const streamingVazio =
+                  isLoading && index === messages.length - 1 && msg.content.trim() === "";
+                const comErro =
+                  (falhou || limiteAtingido) && index === messages.length - 1 && !isLoading;
+                const podeAvaliar = !streamingVazio && !comErro && msg.content.trim() !== "";
+
+                return (
+                  <div key={index} className="cacic-msg">
+                    <AvatarAssistente />
+                    <div className="cacic-msg__body">
+                      {streamingVazio ? (
+                        <div className="cacic-typing" role="status" aria-label="Assistente digitando">
+                          <span></span>
+                          <span></span>
+                          <span></span>
+                        </div>
+                      ) : (
+                        <>
+                          <span className="cacic-msg__meta">Assistente CACIC · {msg.hora}</span>
+                          <div className={`cacic-bubble${comErro ? " cacic-bubble--error" : ""}`}>
+                            <ReactMarkdown>{msg.content}</ReactMarkdown>
+                          </div>
+
+                          {!comErro && msg.fontes && msg.fontes.length > 0 && (
+                            <div className="cacic-sources">
+                              <span className="cacic-sources__label">Fonte</span>
+                              {msg.fontes.map((fonte) => (
+                                <span key={fonte} className="cacic-source">
+                                  <svg viewBox="0 0 24 24" aria-hidden="true">
+                                    <path d="M7 3h7l5 5v13H7z" />
+                                    <path d="M14 3v5h5" />
+                                  </svg>
+                                  {fonte}
+                                </span>
+                              ))}
+                            </div>
+                          )}
+
+                          {comErro && (
+                            <div>
+                              <button type="button" className="cacic-btn" onClick={limiteAtingido ? novaConversa : tentarNovamente}>
+                                <svg viewBox="0 0 24 24" aria-hidden="true">
+                                  <path d="M20 11a8 8 0 1 0-2.3 5.7" />
+                                  <path d="M20 5v6h-6" />
+                                </svg>
+                                {limiteAtingido ? "Nova conversa" : "Tentar de novo"}
+                              </button>
+                            </div>
+                          )}
+
+                          {podeAvaliar && (
+                            <div className="cacic-actions">
+                              <button
+                                type="button"
+                                className="cacic-icon-btn"
+                                aria-label="Copiar resposta"
+                                onClick={() => copiarResposta(msg.content)}
+                              >
+                                <svg viewBox="0 0 24 24" aria-hidden="true">
+                                  <rect x="9" y="9" width="11" height="11" rx="2.5" />
+                                  <path d="M5 15V6.5A2.5 2.5 0 0 1 7.5 4H15" />
+                                </svg>
+                              </button>
+                              <button
+                                type="button"
+                                className="cacic-icon-btn"
+                                aria-label="Resposta útil"
+                                disabled={!!msg.votado}
+                                onClick={() => enviarFeedback(index, true)}
+                                style={{
+                                  opacity: msg.votado && msg.votado !== "util" ? 0.35 : 1,
+                                  color: msg.votado === "util" ? "var(--ok)" : undefined,
+                                }}
+                              >
+                                <svg viewBox="0 0 24 24" aria-hidden="true">
+                                  <path d="M7 11v9H4v-9zM7 11l4-7c1.7 0 2.5 1.2 2.2 2.8L12.8 9H19a2 2 0 0 1 2 2.3l-1.2 6.5A2 2 0 0 1 17.8 19H7" />
+                                </svg>
+                              </button>
+                              <button
+                                type="button"
+                                className="cacic-icon-btn"
+                                aria-label="Resposta não ajudou"
+                                disabled={!!msg.votado}
+                                onClick={() => enviarFeedback(index, false)}
+                                style={{
+                                  opacity: msg.votado && msg.votado !== "nao_util" ? 0.35 : 1,
+                                  color: msg.votado === "nao_util" ? "var(--danger)" : undefined,
+                                }}
+                              >
+                                <svg className="flip" viewBox="0 0 24 24" aria-hidden="true">
+                                  <path d="M7 11v9H4v-9zM7 11l4-7c1.7 0 2.5 1.2 2.2 2.8L12.8 9H19a2 2 0 0 1 2 2.3l-1.2 6.5A2 2 0 0 1 17.8 19H7" />
+                                </svg>
+                              </button>
+                            </div>
+                          )}
+                        </>
+                      )}
+                    </div>
+                  </div>
+                );
+              })}
+              <div ref={messagesEndRef} />
+            </div>
+          </main>
+        )}
+
+        <div className="cacic-dock">
+          <div className="cacic-dock__inner">
+            {emConversa && (
+              <div className="cacic-chips" role="list">
+                {SUGESTOES.map((s) => (
+                  <button
+                    key={s}
+                    type="button"
+                    role="listitem"
+                    className="cacic-chip"
+                    onClick={() => preencherSugestao(s)}
+                  >
+                    {s}
+                  </button>
+                ))}
+              </div>
+            )}
+            <form onSubmit={sendMessage} className={`cacic-composer${isLoading ? " cacic-composer--busy" : ""}`}>
+              <textarea
+                ref={textareaRef}
+                rows={1}
+                value={input}
+                onChange={(e) => setInput(e.target.value)}
+                onKeyDown={aoPressionarTecla}
+                placeholder="Pergunte sobre matrícula, faltas, trancamento…"
+                maxLength={2000}
+                aria-label="Sua pergunta"
+                disabled={isLoading || limiteAtingido}
+              />
+              <button type="submit" className="cacic-send" aria-label="Enviar pergunta" disabled={isLoading || limiteAtingido || !input.trim()}>
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M6 6l6 6-6 6M13 6l6 6-6 6" />
+                </svg>
+              </button>
+            </form>
+            <p className="cacic-note">O assistente pode errar. Confirme sempre no texto oficial do regimento.</p>
+          </div>
+        </div>
       </div>
-    </main>
+    </>
   );
 }

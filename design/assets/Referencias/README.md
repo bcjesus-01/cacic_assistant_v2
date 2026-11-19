@@ -1,0 +1,1 @@
+- `sinform-2026-post.png`: post "Confira os minicursos do segundo dia da Sinform 2026", referência da linguagem visual (fundo grafite com grade, título pesado em caixa alta com palavras em gradiente coral → violeta, pílula de rodapé em gradiente índigo → magenta, botão circular com seta). Serve de consulta; não é um ativo para reutilizar nas telas.
