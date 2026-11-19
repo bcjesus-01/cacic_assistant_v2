@@ -26,6 +26,7 @@ dependencies = [
     "qdrant-client>=1.19.1",
     "sentence-transformers>=6.1.0",
     "sse-starlette>=3.5.0",
+    "torch>=2.0",
     "uvicorn>=0.54.0",
 ]
 
@@ -35,3 +36,15 @@ backend = "backend:main"
 [build-system]
 requires = ["uv_build>=0.13.0,<0.14.0"]
 build-backend = "uv_build"
+
+# O servidor de produção não tem GPU; a versão padrão do PyTorch traz ~4GB de pacotes
+# nvidia-* (CUDA) que nunca são usados e já causaram falta de espaço em disco no deploy.
+# A versão CPU-only é equivalente em funcionalidade pro que o projeto usa (embeddings
+# bge-m3 via sentence-transformers, sempre em CPU aqui) e ordens de magnitude menor.
+[tool.uv.sources]
+torch = [{ index = "pytorch-cpu" }]
+
+[[tool.uv.index]]
+name = "pytorch-cpu"
+url = "https://download.pytorch.org/whl/cpu"
+explicit = true
