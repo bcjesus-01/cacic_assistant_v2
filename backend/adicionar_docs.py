@@ -23,10 +23,12 @@ from qdrant_client import QdrantClient, models
 
 from curados import secoes_markdown
 from regulamentos import DOCUMENTOS_POR_ARTIGO, secoes_por_artigo
+from versionamento import calcular_hash, carregar_manifesto, salvar_manifesto
 
 load_dotenv()
 QDRANT_URL = os.getenv("QDRANT_URL", "http://localhost:6333")
 COLLECTION_NAME = "cacic_docs"
+MANIFESTO = "data/.manifesto_documentos.json"
 
 
 def fonte_de(caminho: str) -> str:
@@ -76,8 +78,11 @@ def main() -> None:
     if not client.collection_exists(COLLECTION_NAME):
         sys.exit(f"A coleção '{COLLECTION_NAME}' não existe. Rode o etl_pipeline.py uma vez.")
 
+    manifesto = carregar_manifesto(MANIFESTO)
+
     for fonte in args.remover:
         print(f"-> Removidos {remover_fonte(client, fonte)} trechos de {fonte}")
+        manifesto.pop(os.path.basename(fonte), None)
 
     chunker = RecursiveCharacterTextSplitter(
         chunk_size=1500, chunk_overlap=150, separators=["\n\n", "\n", " ", ""]
@@ -89,12 +94,16 @@ def main() -> None:
         blocos = carregar(caminho, fonte, chunker)
         print(f"-> {caminho}: {len(blocos)} trechos (substituiu {removidos})")
         documentos.extend(blocos)
+        manifesto[os.path.basename(caminho)] = calcular_hash(caminho)
 
     if documentos:
         embeddings = HuggingFaceEmbeddings(model_name="BAAI/bge-m3")
         QdrantVectorStore(
             client=client, collection_name=COLLECTION_NAME, embedding=embeddings
         ).add_documents(documentos)
+
+    if args.arquivos or args.remover:
+        salvar_manifesto(MANIFESTO, manifesto)
     print(f"Concluído: {len(documentos)} trechos adicionados.")
 
 
