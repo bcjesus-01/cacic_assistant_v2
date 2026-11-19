@@ -2,6 +2,8 @@
 
 Chatbot baseado em **RAG (Retrieval-Augmented Generation)** que responde dúvidas de estudantes de Ciência da Computação da UESC sobre regulamentos, matriz curricular, horas complementares e de extensão, TCC, estágio, matrícula e processos acadêmicos, usando exclusivamente documentos institucionais como fonte. As respostas são entregues em tempo real, token a token, via Server-Sent Events (SSE).
 
+**No ar:** https://assistentecacic.me/
+
 ## Funcionalidades
 
 - Ingestão de documentos: PDFs institucionais são convertidos em Markdown, divididos em trechos, vetorizados e indexados no Qdrant. Conteúdo curado (como o FAQ do CACIC) entra por um fluxo próprio, com uma pergunta e resposta por trecho.
@@ -78,7 +80,7 @@ cacic_assistant_v2/
 ├── .github/workflows/ci.yml  # CI: lint (Ruff), testes (pytest) e checagem de sintaxe
 ├── docs/
 │   ├── FAQ_CACIC.md          # FAQ curado: um par pergunta/resposta por seção
-│   └── DEPLOY.md             # roteiro de deploy (Oracle Linux/ARM64)
+│   └── DEPLOY.md             # roteiro de deploy (Ubuntu/x86_64, testado na Hetzner Cloud)
 ├── design/                   # sistema de design do frontend: tokens, componentes e previews HTML
 ├── backend/
 │   ├── Dockerfile
@@ -306,6 +308,7 @@ Também há `GET /health`, que responde `{"status": "ok"}`.
 - **Reescrita da pergunta de busca:** antes de buscar no Qdrant, uma pergunta de acompanhamento ("e para a matriz 2012?") é reescrita numa versão independente usando o histórico da conversa — só para a busca; o prompt de resposta continua vendo as mensagens originais. Usa um cliente Gemini dedicado (mesmos modelos principal/reserva, saída bem menor), com uma tag própria nos eventos do LangGraph para a rota de SSE não repassar esses tokens ao cliente nem confundir essa chamada interna com uma troca para o modelo de reserva. Qualquer falha ou saída vazia cai para a pergunta original.
 - **Limite por conversa:** com orçamento zero, o limite de `LIMITE_MENSAGENS_POR_THREAD` não é sobre custo, é sobre não esgotar a cota grátis do Gemini. A rota confere o tamanho da conversa com `app_grafo.aget_state(config)` (lê o checkpoint sem rodar nenhum nó do grafo) antes de gerar qualquer resposta; ao atingir o limite, envia o evento SSE `limite` sem nenhuma chamada ao Gemini. O frontend mostra "Nova conversa" nesse caso (não "Tentar novamente", que só repetiria a mesma pergunta) e desabilita a caixa de texto até o aluno clicar.
 - **Limite por IP e teto diário global:** o limite por conversa é fácil de burlar (o botão "Nova conversa" gera outro `thread_id`), e a cota do Gemini (free tier) é compartilhada por toda a chave de API, não por aluno. `backend/limites.py` guarda, por dia, quantas mensagens cada IP mandou e o total aceito (uma linha-sentinela `__global__` na mesma tabela, incrementada com o mesmo `UPSERT ... RETURNING` atômico usado pelo IP — sem `SELECT SUM` sujeito a corrida). O IP vem de `X-Forwarded-For` em produção (confiável porque o Caddy é o único ponto de entrada e não repassa o header que o cliente tentar forjar) ou da conexão direta em desenvolvimento. O contador global conta em dobro uma pergunta de acompanhamento (custa uma chamada extra ao Gemini, para reescrever a busca) — erra para o lado seguro, nunca subconta chamadas reais. Falha ao acessar o Postgres deixa passar (o checkpointer já depende dele; se estiver fora do ar, o chat já não funciona de qualquer jeito). Excedendo qualquer um dos dois limites, o servidor envia `event: bloqueado`; o frontend desabilita a caixa de texto sem oferecer nenhum botão de ação (nem "tentar de novo" nem "nova conversa" ajudam nesse caso).
+- **Deploy e HTTPS sem configuração manual de certificado:** produção roda em `docker-compose.prod.yml` (Dockerfiles multi-stage, sem bind mount de código) atrás do Caddy, que também resolve CORS ao servir frontend e backend (`/api/*`) no mesmo host. Usar um nome de domínio (em vez de `:80`) no `Caddyfile` já é suficiente para o Caddy provisionar e renovar o certificado Let's Encrypt sozinho, por HTTP-01 — nenhuma outra configuração de TLS é necessária. Hospedado hoje numa VPS Hetzner Cloud; o `docs/DEPLOY.md` não depende de provedor ou arquitetura específicos (testado em Ubuntu/x86_64, mas vale para qualquer VM Linux com Docker).
 
 ## Limitações conhecidas
 
@@ -319,7 +322,6 @@ Também há `GET /health`, que responde `{"status": "ok"}`.
 
 - Reranker ou expansão de consulta (HyDE/multi-query), para o descompasso de vocabulário entre pergunta e resposta que a divisão por artigo não resolveu — uma primeira tentativa de busca híbrida (BM25 + densa) piorou a avaliação sem corrigir os casos-alvo (ver "Limitações conhecidas").
 - Número da página do PDF junto da fonte nas respostas (hoje só o nome do documento).
-- Deploy em produção: `docker-compose.prod.yml` e `Caddyfile` já preparados; falta disponibilidade de VM.
 - Integrar ou consolidar os módulos de `data_pipeline/` (chunking semântico, reranker).
 
 ## Autor
